@@ -76,7 +76,7 @@ terraform destroy -auto-approve
 - [Wazuh Server](https://wazuh.com/) configured and operational to collect logs from devices.
 - [Wazuh Agents](https://documentation.wazuh.com/current/installation-guide/wazuh-agent/wazuh-agent-package-windows.html) configured across infrastructure and feeding data into Wazuh server.
 - Firewall configured to only allow your own IP to access deployed systems. 
-- Flexible domain configuration file allowing for easy changes to underlying configuration.
+- Flexible [domain configuration file](ansible/domain_setup.yml) allowing for easy changes to underlying configuration.
 - OSQuery installed across infrastructure, using configuration templates from [Palantir](https://github.com/palantir/osquery-configuration)
 - [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) Server configured and operational.
 - [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) Agents configured across infrastructure and feeding data into Velociraptor server.
@@ -114,7 +114,7 @@ Internally the following static IPs and hostnames are used in 10.0.0.0/16 range 
 The following default credentials are created during installation. Printout of configured credentials will be displayed after full deployment process completes. 
 
 | Host  | Login | Password | Role |
-| ------------- | ------------- | ------------- |
+| ------------- | ------------- | ------------- | ------------- |
 | PDC-1  | blueteam.lab\blueteam  | BlueTeamDetection0%%% | Domain Administrator for blueteam.lab domain |
 | DETECTION1  | localadministrator | BlueTeamDetection0%%% | Local Administrator of DETECTION1 workstation |
 | DETECTION2  | localadministrator| BlueTeamDetection0%%% | Local Administrator of DETECTION2 workstation |
