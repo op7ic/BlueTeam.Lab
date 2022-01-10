@@ -45,10 +45,9 @@ cd ansible && ANSIBLE_CONFIG=./ansible.cfg ansible-inventory -i inventory.azure_
 terraform destroy -auto-approve
 ```
 
-
 # Components
 
-The following section describes various components making up this lab along with details on how to change configuration files to modify them.
+The following section describes various components making up this lab along with details on how to change configuration files to modify the setup.
 
 ## OSQuery
 
@@ -64,15 +63,38 @@ osquery_download:
   debian_url: https://pkg.osquery.io/deb/osquery_5.1.0-1.linux_amd64.deb
 ```
 
-## Wazuh Server
+## Wazuh Server and Wazuh Agent
 
-## Wazuh Agent
+Wazuh server is configured to run on top of Ubuntu and entire configuration is done using headless scripts located in [ansible/roles/wazuhserver/templates](ansible/roles/wazuhserver/templates). 
+
+In order to modify the configuration of Wazuh Server please change the following config section in [domain_setup.yml](ansible/domain_setup.yml) file.
+```
+# Setup for Wazuh Server and Agent. Versions will change so you might need to update this URL with time.
+wazuh_admin:
+  username: blueteam
+  password: BlueTeamDetection0%%%
+  wazuh_services_password: BlueTeamDetection0%%%
+  agent_url: https://packages.wazuh.com/4.x/windows/wazuh-agent-4.2.5-1.msi
+```
+Please note that the same password, located uner ```wazuh_services_password``` variable will be used for all exposed Wazuh services such as kibana or logstash.
+
+## Sysmon
+
+Standalone Sysmon is deployed across every host in BlueTeam.Lab system and is configured to log data locally so that other collectors can get hold of that data (i.e. Wazuh Agent).
+
+Ansible deployment task can be found in [ansible/roles/sysmon/tasks/main.yml](ansible/roles/sysmon/tasks/main.yml).
+
+In order to modify the configuration of Sysmon please change the following config section in [domain_setup.yml](ansible/domain_setup.yml) file.
+```
+# Sysmon configuration options. This options allows you to set up where to get Sysmon binary and configuration files from. 
+sysmon:
+  installer_url: https://live.sysinternals.com/Sysmon64.exe
+  config_url: https://raw.githubusercontent.com/SwiftOnSecurity/sysmon-config/master/sysmonconfig-export.xml
+```
 
 ## Domain Members
 
 ## Domain Controller 
-
-## Sysmon
 
 ## WinLogBeat
 
