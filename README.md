@@ -48,7 +48,21 @@ terraform destroy -auto-approve
 
 # Components
 
+The following section describes various components making up this lab along with details on how to change configuration files to modify them.
+
 ## OSQuery
+
+Standalone OSQuery is deployed across every host in BlueTeam.Lab system and is configured to log data locally so that other collectors can get hold of that data (i.e. Wazuh Agent).
+
+Ansible deployment task can be found in [ansible/roles/osqueryagent/tasks/main.yml](ansible/roles/osqueryagent/tasks/main.yml) and corresponding osquery config in [ansible/roles/osqueryagent/templates/osquery.conf](ansible/roles/osqueryagent/templates/osquery.conf).
+
+In order to modify the configuration of OSQuery please change the following config section in [domain_setup.yml](ansible/domain_setup.yml) file.
+```
+# OSQuery download URL. Versions will change so you might need to update this URL with time.
+osquery_download:
+  windows_url: https://pkg.osquery.io/windows/osquery-5.1.0.msi
+  debian_url: https://pkg.osquery.io/deb/osquery_5.1.0-1.linux_amd64.deb
+```
 
 ## Wazuh Server
 
@@ -77,7 +91,7 @@ terraform destroy -auto-approve
 - [Wazuh Agents](https://documentation.wazuh.com/current/installation-guide/wazuh-agent/wazuh-agent-package-windows.html) configured across infrastructure and feeding data into Wazuh server.
 - Firewall configured to only allow your own IP to access deployed systems. 
 - Flexible [domain configuration file](ansible/domain_setup.yml) allowing for easy changes to underlying configuration.
-- OSQuery installed across infrastructure, using configuration templates from [Palantir](https://github.com/palantir/osquery-configuration)
+- Standalone [OSQuery](https://osquery.readthedocs.io/en/stable/installation/install-windows/) installed across infrastructure, using configuration templates from [Palantir](https://github.com/palantir/osquery-configuration).
 - [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) Server configured and operational.
 - [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) Agents configured across infrastructure and feeding data into Velociraptor server.
 
@@ -130,7 +144,7 @@ The following default credentials are created during installation. Printout of c
 | Wazuh  | wazuh_user | BlueTeamDetection0%%% | Wazuh service account | 
 | Wazuh  | blueteam | BlueTeamDetection0%%% |  Velociraptor web login |
 
-In order to modify default credentials please change usernames and passwords in (domain_setup.yml)[ansible/domain_setup.yml) file.
+In order to modify default credentials please change usernames and passwords in [domain_setup.yml](ansible/domain_setup.yml) file.
 
 # Sources of Inspiration 
 
