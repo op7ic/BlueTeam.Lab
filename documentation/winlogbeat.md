@@ -2,9 +2,9 @@
 
 WinLogBeat (OSS Version) is deployed across every host in BlueTeam.Lab system and is configured to log data to Elasticsearch instance installed together with Wazuh, irrespective of Wazuh Agent picking up logs for its own monitoring. This was done so that, even when Wazuh indexes and creates its own alerts, any type of custom modelling can still be executed on raw data we pick up from various windows events and other sources.
 
-Ansible deployment task can be found in [ansible/roles/winlogbeat/tasks/main.yml](ansible/roles/winlogbeat/main.yml) along with winlogbeat config in [ansible/roles/winlogbeat/templates](ansible/roles/winlogbeat/templates).
+Ansible deployment task can be found in [ansible/roles/winlogbeat/tasks/main.yml](../ansible/roles/winlogbeat/main.yml) along with winlogbeat config in [ansible/roles/winlogbeat/templates](../ansible/roles/winlogbeat/templates).
 
-In order to modify the configuration of WinLogBeat please change the following config section in [domain_setup.yml](ansible/domain_setup.yml) file.
+In order to modify the configuration of WinLogBeat please change the following config section in [domain_setup.yml](../ansible/domain_setup.yml) file.
 ```
 # WinLogBeat download URL
 # NOTE: 
@@ -17,7 +17,7 @@ winlogbeat:
   elastic_password: BlueTeamDetection0%%%
 ```
 
-The following configuration is used for WinLogBeat and can be easily modified by changing file located in the [templates directory](ansible/roles/winlogbeat/templates/):
+The following configuration is used for WinLogBeat and can be easily modified by changing file located in the [templates directory](../ansible/roles/winlogbeat/templates/):
 
 ```
 winlogbeat.event_logs:

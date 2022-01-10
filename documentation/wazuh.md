@@ -1,7 +1,7 @@
 # Wazuh 
 
 ## Wazuh Server
-Wazuh server is configured to run on top of Ubuntu and entire configuration is done using headless scripts located in [../ansible/roles/wazuhserver/templates](../ansible/roles/wazuhserver/templates). 
+Wazuh server is configured to run on top of Ubuntu and entire configuration is done using headless scripts located in [/ansible/roles/wazuhserver/templates](../ansible/roles/wazuhserver/templates). 
 
 In order to modify the configuration of Wazuh please change the following config section in [domain_setup.yml](../ansible/domain_setup.yml) file.
 ```
@@ -17,4 +17,4 @@ Please note that the same password, located uner ```wazuh_services_password``` v
 
 ## Wazuh Agent
 
-Wazuh agent is configured to ship logs to authomatically created Wazuh Server so during installation of MSI package, as directed by ```wazuh_admin.agent_url``` variable in [domain_setup.yml](../ansible/domain_setup.yml), IP of the Wazuh Server passed along as one of the parameters. The details of corresponding Ansible task can be found in[../ansible/roles/wazuhagent/tasks/main.yml](../ansible/roles/wazuhagent/tasks/main.yml).
+Wazuh agent is configured to ship logs to authomatically created Wazuh Server so during installation of MSI package, as directed by ```wazuh_admin.agent_url``` variable in [domain_setup.yml](../ansible/domain_setup.yml), IP of the Wazuh Server passed along as one of the parameters. The details of corresponding Ansible task can be found in[/ansible/roles/wazuhagent/tasks/main.yml](../ansible/roles/wazuhagent/tasks/main.yml).

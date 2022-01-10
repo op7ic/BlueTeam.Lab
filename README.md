@@ -1,7 +1,7 @@
 # BlueTeamLab
 
-This repository contains a set of **Terraform** and **Ansible** scripts to create an orchestrated Blue Team Detection Lab. The goal of this project is to provide red and blue teams with ability to deploy ad-hoc detection lab to test various attacks and forensic artifacts on latest Windows environment.  
-
+This repository contains a set of **Terraform** and **Ansible** scripts to create an orchestrated Blue Team Detection Lab. The goal of this project is to provide red and blue teams with ability to deploy ad-hoc detection lab to test various attacks and forensic artifacts on latest Windows environment and then to get 'SOC-like' view into generated data.  
+---
 # How to run this lab
 
 ## Prerequisites
@@ -25,7 +25,8 @@ sudo apt install ansible
 sudo apt install python3 python3-pip
 pip3 install pywinrm requests msrest msrestazure azure-cli
 ```
-## Deploy Lab
+
+## Deploying BlueTeam.Lab
 
 Once all the prerequisites are installed perform the following series of steps:
 ```
@@ -44,65 +45,22 @@ cd ansible && ANSIBLE_CONFIG=./ansible.cfg ansible-inventory -i inventory.azure_
 # Once done, destroy your lab using following command:
 terraform destroy -auto-approve
 ```
-
-# Components
+---
+# Documentation
 
 The following section describes various components making up this lab along with details on how to change configuration files to modify the setup.
 
-## OSQuery
-
-Standalone OSQuery is deployed across every host in BlueTeam.Lab system and is configured to log data locally so that other collectors can get hold of that data (i.e. Wazuh Agent).
-
-Ansible deployment task can be found in [ansible/roles/osqueryagent/tasks/main.yml](ansible/roles/osqueryagent/tasks/main.yml) and corresponding osquery config in [ansible/roles/osqueryagent/templates/osquery.conf](ansible/roles/osqueryagent/templates/osquery.conf).
-
-In order to modify the configuration of OSQuery please change the following config section in [domain_setup.yml](ansible/domain_setup.yml) file.
-```
-# OSQuery download URL. Versions will change so you might need to update this URL with time.
-osquery_download:
-  windows_url: https://pkg.osquery.io/windows/osquery-5.1.0.msi
-  debian_url: https://pkg.osquery.io/deb/osquery_5.1.0-1.linux_amd64.deb
-```
-
-## Wazuh Server and Wazuh Agent
-
-Wazuh server is configured to run on top of Ubuntu and entire configuration is done using headless scripts located in [ansible/roles/wazuhserver/templates](ansible/roles/wazuhserver/templates). 
-
-In order to modify the configuration of Wazuh Server please change the following config section in [domain_setup.yml](ansible/domain_setup.yml) file.
-```
-# Setup for Wazuh Server and Agent. Versions will change so you might need to update this URL with time.
-wazuh_admin:
-  username: blueteam
-  password: BlueTeamDetection0%%%
-  wazuh_services_password: BlueTeamDetection0%%%
-  agent_url: https://packages.wazuh.com/4.x/windows/wazuh-agent-4.2.5-1.msi
-```
-Please note that the same password, located uner ```wazuh_services_password``` variable will be used for all exposed Wazuh services such as kibana or logstash.
-
-## Sysmon
-
-Standalone Sysmon is deployed across every host in BlueTeam.Lab system and is configured to log data locally so that other collectors can get hold of that data (i.e. Wazuh Agent).
-
-Ansible deployment task can be found in [ansible/roles/sysmon/tasks/main.yml](ansible/roles/sysmon/tasks/main.yml).
-
-In order to modify the configuration of Sysmon please change the following config section in [domain_setup.yml](ansible/domain_setup.yml) file.
-```
-# Sysmon configuration options. This options allows you to set up where to get Sysmon binary and configuration files from. 
-sysmon:
-  installer_url: https://live.sysinternals.com/Sysmon64.exe
-  config_url: https://raw.githubusercontent.com/SwiftOnSecurity/sysmon-config/master/sysmonconfig-export.xml
-```
+- [OSQuery](documentation/osquery.md)
+- [Wazuh Server and Wazuh Agent](documentation/wazuh.md)
+- [Sysmon](documentation/sysmon.md)
+- [WinLogBeat](documentation/winlogbeat.md)
+- [Velociraptor Server and Velociraptor Agent](documentation/velociraptor.md)
 
 ## Domain Members
 
 ## Domain Controller 
 
-## WinLogBeat
-
-## Velociraptor Server
-
-## Velociraptor Agent
-
-
+---
 # Features
 
 - Fully Patched, up to date Windows AD with two workstations connected to Windows domain.
@@ -117,6 +75,7 @@ sysmon:
 - [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) Server configured and operational.
 - [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) Agents configured across infrastructure and feeding data into Velociraptor server.
 
+---
 # Firewall Configuration
 
 The following table summarises a set of firewall rules applied across BlueTeamLab enviroment in default configuration. Please modify [main.tf](main.tf) file to add new firewall rules as needed in **Firewall Rule Setup** section.
@@ -145,9 +104,10 @@ Internally the following static IPs and hostnames are used in 10.0.0.0/16 range 
 | DETECTION1  | Windows 10 Workstation 1 | 10.0.11.11 |
 | DETECTION2  | Windows 10 Workstation 2 | 10.0.11.12 |
 
+---
 # User Configuration
 
-The following default credentials are created during installation. Printout of configured credentials will be displayed after full deployment process completes. 
+The following default credentials are created during installation. Printout of actually, configured credentials will be displayed after full deployment process completes. 
 
 | Host  | Login | Password | Role |
 | ------------- | ------------- | ------------- | ------------- |
@@ -168,6 +128,9 @@ The following default credentials are created during installation. Printout of c
 
 In order to modify default credentials please change usernames and passwords in [domain_setup.yml](ansible/domain_setup.yml) file.
 
-# Sources of Inspiration 
+# Sources of Inspiration and Thanks
 
-https://github.com/christophetd/Adaz
+A good percentage of this code was borrowed and adapted from Christophe Tafani-Dereeper's [Adaz](https://github.com/christophetd/Adaz). A huge thanks to him for building the foundation that allowed me to design this lab environment.
+
+
+
