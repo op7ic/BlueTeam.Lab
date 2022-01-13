@@ -1,6 +1,6 @@
-#OSQuery
+# OSQuery and FleetDM
 
-Fleet-managed instance of OSQuery is deployed across every host in BlueTeam.Lab system and is configured to log data to Fleet Manager installed on the same server where Wazuh instance is.
+FleetDM-managed instance of OSQuery is deployed across every host in BlueTeam.Lab system and is configured to log data to Fleet Manager installed on the same server where Wazuh instance is.
 
 Ansible OSQuery deployment task can be found in [ansible/roles/osqueryagent/tasks/main.yml](../ansible/roles/osqueryagent/tasks/main.yml) and corresponding FleetDM in [../ansible/roles/fleetserver/tasks/main.yml](/ansible/roles/fleetserver/tasks/main.yml).
 
