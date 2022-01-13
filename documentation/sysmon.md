@@ -1,3 +1,5 @@
+# Sysmon
+
 Sysmon is deployed across every host in BlueTeam.Lab system and is configured to log data locally so that other collectors can get hold of that data (i.e. Wazuh Agent).
 
 Ansible deployment task can be found in [ansible/roles/sysmon/tasks/main.yml](../ansible/roles/sysmon/tasks/main.yml).
