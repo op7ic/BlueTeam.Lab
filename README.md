@@ -13,7 +13,7 @@ NOTE: This lab is deliberately designed to be insecure. Please do not connect th
 
 # Lab Layout
 
-![](./documentation/pic/layout.PNG)
+![](./documentation/pic/layout.png)
 
 ---
 
@@ -155,9 +155,9 @@ In order to modify default credentials please change usernames and passwords in 
 
 # Screenshots
 
-![](./documentation/pic/wazuh-logs.png)
-![](./documentation/pic/wazuh-pdc.png)
-![](./documentation/pic/winlogbeat.png)
+![](./documentation/pic/wazuh-logs.PNG)
+![](./documentation/pic/wazuh-pdc.PNG)
+![](./documentation/pic/winlogbeat.PNG)
 ![](./documentation/pic/winlogbeat2.png)
 
 
