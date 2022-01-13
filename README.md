@@ -82,8 +82,6 @@ The following sections describes various components making up this lab along wit
 - [Velociraptor Server and Velociraptor Agent](documentation/velociraptor.md)
 - [Domain Members](documentation/winmember.md)
 
-## Domain Controller 
-
 ---
 # Features
 
@@ -156,8 +154,9 @@ In order to modify default credentials please change usernames and passwords in 
 # Screenshots
 
 ![](./documentation/pic/wazuh-logs.PNG)
+
 ![](./documentation/pic/wazuh-pdc.PNG)
-![](./documentation/pic/winlogbeat.PNG)
+
 ![](./documentation/pic/winlogbeat2.png)
 
 
@@ -275,5 +274,11 @@ A good percentage of this code was borrowed and adapted from Christophe Tafani-D
 
 # FAQ 
 
-- I get 'Disk wks-1-os-disk already exists in resource group BLUETEAM-LAB. Only CreateOption.Attach is supported.'
+- I get ```Disk wks-1-os-disk already exists in resource group BLUETEAM-LAB. Only CreateOption.Attach is supported.``` or something similar to this error.
 Re-run terraform commands ```terraform destroy -auto-approve && terraform apply -auto-approve``` to destroy and re-create the lab. This error seems to show up when Azure doesn't clean up all the disks properly so there are leftover resources with the same name.
+
+- I get ```Operation 'startTenantUpdate' is not allowed on VM 'domain-controller' since the VM is marked for deletion. You can only retry the Delete operation (or wait for an ongoing one to complete).``` or something similar to this error.
+Re-run terraform commands ```terraform destroy -auto-approve && terraform apply -auto-approve``` to destroy and re-create the lab. This error seems to show up when Azure doesn't clean up all of the resources properly so there are leftovers which needs to be destroyed before lab is created due to clash in names and/or locations.
+
+- I get ```Network security group windows-nsg cannot be deleted because old references for the following Nics``` or something similar to this error.
+Re-run terraform commands ```terraform destroy -auto-approve && terraform apply -auto-approve``` to destroy and re-create the lab. This error seems to show up when Azure doesn't clean up all of the resources properly so there are leftovers which needs to be destroyed before lab is created due to clash in names and/or locations.
