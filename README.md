@@ -71,18 +71,6 @@ terraform destroy -auto-approve
 ```
 
 ---
-# Documentation
-
-The following sections describes various components making up this lab along with details on how to change configuration files to modify the setup.
-
-- [OSQuery and Fleetdm Server](documentation/osquery.md)
-- [Wazuh Server and Wazuh Agent](documentation/wazuh.md)
-- [Sysmon](documentation/sysmon.md)
-- [WinLogBeat](documentation/winlogbeat.md)
-- [Velociraptor Server and Velociraptor Agent](documentation/velociraptor.md)
-- [Domain Members](documentation/winmember.md)
-
----
 # Features
 
 - Fully Patched, up to date Windows AD with two workstations connected to Windows domain.
@@ -93,9 +81,21 @@ The following sections describes various components making up this lab along wit
 - [Wazuh Agents](https://documentation.wazuh.com/current/installation-guide/wazuh-agent/wazuh-agent-package-windows.html) configured across infrastructure and feeding data into Wazuh server.
 - Firewall configured to only allow your own IP to access deployed systems. 
 - Flexible [domain configuration file](ansible/domain_setup.yml) allowing for easy changes to underlying configuration.
-- [OSQuery](https://osquery.readthedocs.io/en/stable/installation/install-windows/) and [Fleetm](https://github.com/fleetdm/fleet) installed across infrastructure, using configuration templates from [Palantir](https://github.com/palantir/osquery-configuration).
+- [OSQuery](https://osquery.readthedocs.io/en/stable/installation/install-windows/) and [FleetDM](https://github.com/fleetdm/fleet) installed across infrastructure, using configuration templates from [Palantir](https://github.com/palantir/osquery-configuration).
 - [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) Server configured and operational.
 - [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) Agents configured across infrastructure and feeding data into Velociraptor server.
+
+---
+# Documentation
+
+The following sections describes various components making up this lab along with details on how to change configuration files to modify the setup.
+
+- [OSQuery and Fleetdm Server](documentation/osquery.md)
+- [Wazuh Server and Wazuh Agent](documentation/wazuh.md)
+- [Sysmon](documentation/sysmon.md)
+- [WinLogBeat](documentation/winlogbeat.md)
+- [Velociraptor Server and Velociraptor Agent](documentation/velociraptor.md)
+- [Domain Members](documentation/winmember.md)
 
 ---
 # Firewall Configuration
@@ -123,14 +123,14 @@ Internally the following static IPs and hostnames are used in 10.0.0.0/16 range 
 | Host  | Role | Internal IP |
 | ------------- | ------------- | ------------- |
 | PDC-1  | Primary Domain Controller  | 10.0.10.10 |
-| Wazuh  | [Wazuh Server](https://wazuh.com/), also hosting [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) installation | 10.0.10.100 |
+| Wazuh  | [Wazuh Server](https://wazuh.com/), also hosting [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) installation and FleetDM | 10.0.10.100 |
 | DETECTION1  | Windows 10 Workstation 1 | 10.0.11.11 |
 | DETECTION2  | Windows 10 Workstation 2 | 10.0.11.12 |
 
 ---
 # User Configuration
 
-The following default credentials are created during installation. Printout of actually, configured credentials will be displayed after full deployment process completes. 
+The following default credentials are created during installation. Printout of actual, configured credentials, will be displayed after full deployment process completes. 
 
 | Host  | Login | Password | Role |
 | ------------- | ------------- | ------------- | ------------- |
