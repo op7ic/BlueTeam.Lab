@@ -1,7 +1,8 @@
 # BlueTeam.Lab
 
-![BlueTeam.Lab](./documentation/pic/logo.PNG)
-
+<p align="center">
+  <img src="https://github.com/op7ic/BlueTeam.Lab/blob/master/documentation/pic/logo.PNG?raw=true" alt="BlueTeam.Lab"/>
+</p>
 
 # Purpose
 
