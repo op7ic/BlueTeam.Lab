@@ -1,11 +1,11 @@
-# BlueTeamLab
+# BlueTeam.Lab
 
-![](./documentation/pic/logo.png)
+![BlueTeam.Lab](./documentation/pic/logo.PNG)
 
 
 # Purpose
 
-This project contains a set of **Terraform** and **Ansible** scripts to create an orchestrated Blue Team Detection Lab. The goal of this project is to provide red and blue teams with ability to deploy ad-hoc detection lab to test various attacks and forensic artifacts on latest Windows environment and then to get 'SOC-like' view into generated data. 
+This project contains a set of **Terraform** and **Ansible** scripts to create an orchestrated BlueTeam.Lab. The goal of this project is to provide red and blue teams with ability to deploy ad-hoc detection lab to test various attacks and forensic artifacts on latest Windows environment and then to get 'SOC-like' view into generated data. 
 
 NOTE: This lab is deliberately designed to be insecure. Please do not connect this system to any network you care about.
 
