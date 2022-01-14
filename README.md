@@ -1,7 +1,7 @@
 # BlueTeam.Lab
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/op7ic/BlueTeam.Lab/main/documentation/pic/logo.PNG" alt="BlueTeam.Lab"/>
+  <img src="https://raw.githubusercontent.com/op7ic/BlueTeam.Lab/main/documentation/pic/logo.PNG?token=GHSAT0AAAAAABQNHSGXR3HNCOWG4XLCC5W6YPB3QOQ" alt="BlueTeam.Lab"/>
 </p>
 
 # Purpose
