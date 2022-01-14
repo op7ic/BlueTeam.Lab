@@ -1,6 +1,6 @@
 # BlueTeamLab
 
-
+![](./documentation/pic/logo.png)
 
 
 # Purpose
