@@ -1,7 +1,7 @@
 # BlueTeam.Lab
 
 <p align="center">
-  <img src="https://github.com/op7ic/BlueTeam.Lab/blob/master/documentation/pic/logo.PNG" alt="BlueTeam.Lab"/>
+  <img src="https://github.com/op7ic/BlueTeam.Lab/blob/master/documentation/pic/logo.PNG?raw=true" alt="BlueTeam.Lab"/>
 </p>
 
 
