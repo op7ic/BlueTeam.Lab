@@ -1,8 +1,9 @@
 # BlueTeam.Lab
 
 <p align="center">
-  <img src="https://github.com/op7ic/BlueTeam.Lab/blob/main/documentation/pic/logo.PNG?raw=true" alt="BlueTeam.Lab"/>
+  <img src="https://github.com/op7ic/BlueTeam.Lab/blob/master/documentation/pic/logo.PNG" alt="BlueTeam.Lab"/>
 </p>
+
 
 # Purpose
 
@@ -69,14 +70,38 @@ cd ansible && ANSIBLE_CONFIG=./ansible.cfg ansible-inventory -i inventory.azure_
 
 # Once done, destroy your lab using following command:
 terraform destroy -auto-approve
+
+#NOTE: It will take about an hour to configure it all.
 ```
+
+# Deploying Different Windows Versions
+
+Terraform [variables](variables.tf) set the type of operating systems used for the deployment. A simple modification to runtime variables allows to specify different OS to run entire Active Directory on. Default option is to use Windows 10 Enterprise for **Workstations** and Server 2019 Datacenter for **Domain Controller**. Here are examples of few common configuration options that can be used for modify entire enviroment:
+
+```
+# Use Windows 10 Enterprise for Workstations and Server 2019 Datacenter for DC (default option)
+terraform apply -auto-approve
+
+# Use Windows 11 Enterprise for Workstations and Server 2019 Datacenter for DC
+terraform apply -auto-approve  -var="workstation_os=Windows-11" -var="workstation_SKU=win11-21h2-ent" -var="workstations_vm_size=Standard_DC2s_v2" 
+
+# Use Windows 11 Enterprise for Workstations and Server 2012 Datacenter for DC
+terraform apply -auto-approve -var="workstation_os=Windows-11" -var="workstation_SKU=win11-21h2-ent" -var="workstations_vm_size=Standard_DC2s_v2" -var="dc_os=WindowsServer" -var="dc_SKU=2012-Datacenter"
+
+# Use Windows 11 Enterprise for Workstations and Server 2016 Datacenter for DC
+terraform apply -auto-approve -var="workstation_os=Windows-11" -var="workstation_SKU=win11-21h2-ent" -var="workstations_vm_size=Standard_DC2s_v2" -var="dc_os=WindowsServer" -var="dc_SKU=2016-Datacenter"
+
+# Use Windows 10 Pro N for Workstations and Server 2012 Datacenter for DC
+terraform apply -auto-approve -var="workstation_os=Windows-10" -var="workstation_SKU=21h1-pron" -var="dc_os=WindowsServer" -var="dc_SKU=2012-Datacenter"
+```
+
+Command ```az vm image list``` can be used to identify various OS versions for the deployment.
 
 ---
 # Features
 
 - Fully Patched, up to date Windows AD with two workstations connected to Windows domain.
-- Auditing policies configured based on [CIS Guide](https://www.cisecurity.org/blog/prepare-for-your-next-cybersecurity-compliance-audit-with-cis-resources/) to increase event visibility across Windows infrastructure. Auditpol used to configured additional settings.
-- PowerShell Transcript Logs enabled
+- Auditing policies configured based on [CIS Guide](https://www.cisecurity.org/blog/prepare-for-your-next-cybersecurity-compliance-audit-with-cis-resources/) to increase event visibility across Windows infrastructure. [Auditpol](https://www.ultimatewindowssecurity.com/wiki/page.aspx?spid=Auditpol) used to configured additional settings and PowerShell Transcript Logs enabled.
 - [Sysmon64](https://docs.microsoft.com/en-us/sysinternals/downloads/sysmon) deployed across infrastructure using latest [SwiftOnSecurity](https://github.com/SwiftOnSecurity/sysmon-config) configuration for Windows devices.
 - [Wazuh Server](https://wazuh.com/) configured and operational to collect logs from devices.
 - [Wazuh Agents](https://documentation.wazuh.com/current/installation-guide/wazuh-agent/wazuh-agent-package-windows.html) configured across infrastructure and feeding data into Wazuh server.
@@ -97,6 +122,51 @@ The following sections describes various components making up this lab along wit
 - [WinLogBeat](documentation/winlogbeat.md)
 - [Velociraptor Server and Velociraptor Agent](documentation/velociraptor.md)
 - [Domain Members](documentation/winmember.md)
+
+# Credentials
+
+Once lab is constructed, Terraform will print out actual location of the systems and associated credentials. Example output can be found below.
+
+```
+Network Setup:
+
+Domain Controller = x.x.x.x
+Workstation1 = x.x.x.x
+Workstation2 = x.x.x.x
+Wazuh Server IP = x.x.x.x
+Wazuh Web Interface = https://x.x.x.x:443/
+Velociraptor Web Inteface: = https://x.x.x.x:10000/
+FleetDM Web Interface: = https://x.x.x.x:9999/
+
+Credentials:
+
+Domain Admin:
+	blueteam.lab\blueteam BlueTeamDetection0%%%
+Local Admin on Workstations:
+	localadministrator BlueTeamDetection0%%%
+Wazuh Server SSH Login:
+	blueteam BlueTeamDetection0%%%
+Wazuh Logins:
+	wazuh  BlueTeamDetection0%%%
+	admin  BlueTeamDetection0%%%
+	kibanaserver  BlueTeamDetection0%%%
+	kibanaro  BlueTeamDetection0%%%
+	logstash  BlueTeamDetection0%%%
+	readall  BlueTeamDetection0%%%
+	snapshotrestore  BlueTeamDetection0%%%
+	wazuh_admin  BlueTeamDetection0%%%
+	wazuh_user  BlueTeamDetection0%%%
+Velociraptor Web Inteface Login:
+	blueteam BlueTeamDetection0%%%
+FleetDM Web Inteface Login:
+	Created upon setup completion
+
+RDP to your domain controller:
+xfreerdp /v:x.x.x.x /u:blueteam.lab\\blueteam '/p:BlueTeamDetection0%%%' +clipboard /cert-ignore
+
+RDP to a workstation:
+xfreerdp /v:x.x.x.x /u:localadministrator '/p:BlueTeamDetection0%%%' +clipboard /cert-ignore
+```
 
 ---
 # Firewall Configuration
@@ -159,6 +229,8 @@ In order to modify default credentials please change usernames and passwords in 
 ![](./documentation/pic/wazuh-pdc.PNG)
 
 ![](./documentation/pic/winlogbeat2.png)
+
+![](./documentation/pic/Fleetdm.PNG)
 
 
 # Contributing
@@ -269,10 +341,6 @@ Contributions, fixes, and improvements can be submitted directly against this pr
 | - variables.tf
 ```
 
-# Sources of Inspiration and Thanks
-
-A good percentage of this code was borrowed and adapted from Christophe Tafani-Dereeper's [Adaz](https://github.com/christophetd/Adaz). A huge thanks for building the foundation that allowed me to design this lab environment.
-
 # FAQ 
 
 - I get ```Disk wks-1-os-disk already exists in resource group BLUETEAM-LAB. Only CreateOption.Attach is supported.``` or something similar to this error.
@@ -283,3 +351,18 @@ A good percentage of this code was borrowed and adapted from Christophe Tafani-D
 
 - I get ```Network security group windows-nsg cannot be deleted because old references for the following Nics``` or something similar to this error.
   - Re-run terraform commands ```terraform destroy -auto-approve && terraform apply -auto-approve``` to destroy and re-create the lab. This error seems to show up when Azure doesn't clean up all of the resources properly so there are leftovers which needs to be destroyed before lab is created due to clash in names and/or locations.
+  
+- Why Azure?
+  - [Free Credits are available with trial account](https://azure.microsoft.com/en-us/free/)
+
+- How do I modify network segments, deployment size or other variables?
+  - Modify Terraform [variables](variables.tf) file to change your setup. Alternatively, each variable can be changed during runtime by appending ```-var``` to ```terraform apply```. For example, ```terraform apply --auto-approve -var="region=East US 2"``` would modify region to be different then the default set in [variables](variables.tf) file. Using a chain of ```-var``` parameters, entire setup, including network ranges, operating systems and VM size can be changed.
+   
+- How to find SKUs for specific deployment?
+  - Use Azure command ```az vm list-skus --location westeurope --all --output table``` to find SKUs which are available for your deployment.
+  
+# Sources of Inspiration and Thanks
+
+A good percentage of this code was borrowed and adapted from Christophe Tafani-Dereeper's [Adaz](https://github.com/christophetd/Adaz). A huge thanks for building the foundation that allowed me to design this lab environment.
+
+

@@ -87,3 +87,15 @@ workstation_configuration:
 - name: DETECTION1
   local_admins: [john, karen, florence]
 ```
+
+## Slow setup for workstations
+
+During my tests I noticed that Azure appears to slow down boot time for some of the systems over time. Simply put, initially Azure creation is very quick but with subsequent rebuilding process it appears to slow down. To counter this effect, and reduce potential for any timeouts, when windows system is rebooted, the following timeout parameters are added to ensure that even if we have slow start, ansible playbooks won't quit the setup process:
+
+```
+  win_reboot:
+    reboot_timeout: 3600
+    post_reboot_delay: 120
+```
+
+If you would like to change this, please edit ansible setup file [ansible/roles/domain-member/tasks/main.yml](../ansible/roles/domain-member/tasks/main.yml).

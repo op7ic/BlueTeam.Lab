@@ -2,7 +2,7 @@
 
 ## Velociraptor server
 
-Velociraptor server is configured to run on top of Ubuntu and entire configuration is done using pre-generated configuration file located in [templates folder](../ansible/roles/velociraptorserver/templates). If you would like to modify this setup please change [Ansible task](../ansible/roles/velociraptorserver/tasks/main.yml).
+Velociraptor server is configured to run on top of Ubuntu (Wazuh Server) and entire configuration is done using pre-generated configuration file located in [templates folder](../ansible/roles/velociraptorserver/templates). If you would like to modify this setup please change [Ansible task](../ansible/roles/velociraptorserver/tasks/main.yml).
 
 In order to modify the configuration of Velociraptor Server please change the following config section in [domain_setup.yml](../ansible/domain_setup.yml) file.
 ```
@@ -14,7 +14,7 @@ velociraptor_server:
   password: BlueTeamDetection0%%%
 ```
 
-```Username``` and ```Password``` parameters refer to web login for Velociraptor Server console. 
+```Username``` and ```Password``` parameters refer to web login for Velociraptor Server console and corresponds to installation scripts which can be found in [templates folder](../ansible/roles/velociraptorserver/templates). 
 
 
 ## Velociraptor Agent
