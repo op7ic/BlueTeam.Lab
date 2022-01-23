@@ -8,11 +8,15 @@ In order to modify the configuration of OSQuery and Fleet please change the foll
 ```
 # FleetDM Fleet Setup
 Fleetdm:
-  enroll_secret: 7548392034598765483902313249182541924120598152194
+  enroll_secret: 7548392034598123
   server_download_url: https://github.com/fleetdm/fleet/releases/download/fleet-v4.8.0/fleet_v4.8.0_linux.tar.gz
-  client_download_url: https://github.com/fleetdm/fleet/releases/download/v0.0.5/orbit_0.0.5_windows.zip
+  fleet_ctl_download_url: https://github.com/fleetdm/fleet/releases/download/fleet-v4.8.0/fleetctl_v4.8.0_linux.tar.gz
   server_install_folder: /opt/fleetdm
   redis_address: 127.0.0.1:6379
+  username: blueteam@blueteam.lab
+  account_name: blueteam
+  password: BlueTeamDetection0%%%
+  org: blueteam
   mysql:
     address: 127.0.0.1:3306
     database: fleetdm

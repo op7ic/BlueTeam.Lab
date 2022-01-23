@@ -7,9 +7,9 @@
 
 # Purpose
 
-This project contains a set of **Terraform** and **Ansible** scripts to create an orchestrated BlueTeam.Lab. The goal of this project is to provide red and blue teams with ability to deploy ad-hoc detection lab to test various attacks and forensic artifacts on latest Windows environment and then to get 'SOC-like' view into generated data. 
+This project contains a set of **Terraform** and **Ansible** scripts to create an orchestrated BlueTeam Lab. The goal of this project is to provide red and blue teams with the ability to deploy ad-hoc detection lab to test various attacks and forensic artifacts on latest Windows environment and then to get 'SOC-like' view into generated data. 
 
-NOTE: This lab is deliberately designed to be insecure. Please do not connect this system to any network you care about.
+NOTE: This lab is deliberately designed to be insecure. Please do not connect this system to any network you care about. 
 
 --- 
 
@@ -44,8 +44,6 @@ sudo apt install python3 python3-pip
 pip3 install pywinrm requests msrest msrestazure azure-cli
 ```
 
-Once above prerequisites are installed and working please follow deployment guide below.
-
 # Building and Deploying BlueTeam.Lab
 
 Once all the [prerequisites](#Prerequisites) are installed perform the following series of steps:
@@ -59,7 +57,7 @@ git clone https://github.com/op7ic/BlueTeam.Lab.git && cd BlueTeam.Lab
 # Initialize Terraform
 terraform init
 
-# Create your lab using following command. It will take roughly 30-40min to create.
+# Create your lab using following command. 
 terraform apply -auto-approve
 
 # Verify layout of your enviroment using ansible
@@ -71,12 +69,12 @@ cd ansible && ANSIBLE_CONFIG=./ansible.cfg ansible-inventory -i inventory.azure_
 # Once done, destroy your lab using following command:
 terraform destroy -auto-approve
 
-#NOTE: It will take about an hour to configure it all.
+#NOTE: It will take about two houts to configure it all, depending on selected hardware.
 ```
 
 # Deploying Different Windows Versions
 
-Terraform [variables](variables.tf) set the type of operating systems used for the deployment. A simple modification to runtime variables allows to specify different OS to run entire Active Directory on. Default option is to use Windows 10 Enterprise for **Workstations** and Server 2019 Datacenter for **Domain Controller**. Here are examples of few common configuration options that can be used for modify entire enviroment:
+Terraform [variables](variables.tf) set the type of operating systems used for this deployment. A simple modification to runtime variables allows to specify different OS to run the entire Active Directory (AD) on. The default option is to use **Windows 10 Enterprise** for **Workstations** and **Windows Server 2019 Datacenter** for **Domain Controller**. Here are examples of a few common configuration options that can be used to modify the entire environment to use different OS versions:
 
 ```
 # Use Windows 10 Enterprise for Workstations and Server 2019 Datacenter for DC (default option)
@@ -100,7 +98,7 @@ Command ```az vm image list``` can be used to identify various OS versions for t
 ---
 # Features
 
-- Fully Patched, up to date Windows AD with two workstations connected to Windows domain.
+- Windows AD with two workstations connected to Windows domain in default setup.
 - Auditing policies configured based on [CIS Guide](https://www.cisecurity.org/blog/prepare-for-your-next-cybersecurity-compliance-audit-with-cis-resources/) to increase event visibility across Windows infrastructure. [Auditpol](https://www.ultimatewindowssecurity.com/wiki/page.aspx?spid=Auditpol) used to configured additional settings and PowerShell Transcript Logs enabled.
 - [Sysmon64](https://docs.microsoft.com/en-us/sysinternals/downloads/sysmon) deployed across infrastructure using latest [SwiftOnSecurity](https://github.com/SwiftOnSecurity/sysmon-config) configuration for Windows devices.
 - [Wazuh Server](https://wazuh.com/) configured and operational to collect logs from devices.
@@ -114,7 +112,7 @@ Command ```az vm image list``` can be used to identify various OS versions for t
 ---
 # Documentation
 
-The following sections describes various components making up this lab along with details on how to change configuration files to modify the setup.
+The following section describes various components making up this lab along with details on how to change configuration files to modify the setup
 
 - [OSQuery and Fleetdm Server](documentation/osquery.md)
 - [Wazuh Server and Wazuh Agent](documentation/wazuh.md)
@@ -159,7 +157,7 @@ Wazuh Logins:
 Velociraptor Web Inteface Login:
 	blueteam BlueTeamDetection0%%%
 FleetDM Web Inteface Login:
-	Created upon setup completion
+        blueteam@blueteam.lab BlueTeamDetection0%%%
 
 RDP to your domain controller:
 xfreerdp /v:x.x.x.x /u:blueteam.lab\\blueteam '/p:BlueTeamDetection0%%%' +clipboard /cert-ignore
@@ -218,7 +216,8 @@ The following default credentials are created during installation. Printout of a
 | Wazuh  | snapshotrestore | BlueTeamDetection0%%% | Wazuh service account | 
 | Wazuh  | wazuh_admin | BlueTeamDetection0%%% | Wazuh service account | 
 | Wazuh  | wazuh_user | BlueTeamDetection0%%% | Wazuh service account | 
-| Wazuh  | blueteam | BlueTeamDetection0%%% |  Velociraptor web login |
+| Wazuh  | blueteam | BlueTeamDetection0%%% |  Velociraptor Web Portal login |
+| Wazuh  | blueteam@blueteam.lab | BlueTeamDetection0%%% |  FleetDM Web Portal login |
 
 In order to modify default credentials please change usernames and passwords in [domain_setup.yml](ansible/domain_setup.yml) file.
 
@@ -231,6 +230,8 @@ In order to modify default credentials please change usernames and passwords in 
 ![](./documentation/pic/winlogbeat2.png)
 
 ![](./documentation/pic/Fleetdm.PNG)
+
+![](./documentation/pic/vraptor-console.PNG)
 
 
 # Contributing
@@ -360,6 +361,9 @@ Contributions, fixes, and improvements can be submitted directly against this pr
    
 - How to find SKUs for specific deployment?
   - Use Azure command ```az vm list-skus --location westeurope --all --output table``` to find SKUs which are available for your deployment.
+
+- I get ``` Max retries exceeded with url: /wsman``` and then connection gets refused when building a system. 
+  - Unfortunately winrm limitations means that, on occasion, winrm will simply stop working as expected and instead connections will freeze up so that scripts can't be executed properly. Rerun ```terraform apply -auto-approve``` to repair damaged host.
   
 # Sources of Inspiration and Thanks
 
