@@ -7,46 +7,41 @@ Windows AD domain members (2x Windows 10 systems) are set to be join AD structur
 The following Terraform provisioning process in [main.tf](../main.tf) is configured for each workstation:
 
 ```
-    # We need to set provisioner to depend on DC and Wazuh completion. Otherwise, it might not setup properly. Boxes can be made before that but to join the domain, DC needs to be alive and present. 
-    # Same goes for various connectors talking with our Wazuh/Velociraptor servers etc.
-    depends_on = [azurerm_resource_group.resourcegroup, azurerm_virtual_machine.dc, azurerm_virtual_machine.wazuh]      
+    # We need to set provisioner to depend on DC and Wazuh completion. Otherwise it might not setup properly. Boxes can be made and patched before that of course but joing domain requires DC to be alive and present. Same goes for various connectors talking with our Wazuh/Velociraptor servers etc.
+    depends_on = [azurerm_resource_group.resourcegroup, azurerm_virtual_machine.dc]  
    
-    # Provision base member configuration 
+    # Provision base member configuration. Extended wait time in case of slower workstations.
     provisioner "local-exec" {
     # Move to working directory were we have our setup for DC ansible
     working_dir = "${path.root}/ansible/"
     # Call out command to setup workstation based on our setup
     # We will pass internal IP of the DC via 'extra-vars' to ensure that DNS config is correct
-    command = "sleep 120; /bin/bash -c 'ANSIBLE_CONFIG=${path.root}/ansible.cfg AZURE_AD_USER=${local.config_file.local_admin_credentials.username} AZURE_PASSWORD=${local.config_file.local_admin_credentials.password} ansible-playbook domain-member.yml -v -t common,base --extra-vars \"dc_internal_ip=${azurerm_network_interface.server.private_ip_address} wazuh_server_ip=${azurerm_network_interface.wazuh.private_ip_address}\"' "
+    command = "sleep 300; /bin/bash -c 'ANSIBLE_CONFIG=${path.root}/ansible.cfg ansible-playbook domain-member.yml -vvv -t base --extra-vars \"dc_internal_ip=${azurerm_network_interface.server.private_ip_address} wazuh_server_ip=${azurerm_network_interface.wazuh.private_ip_address}\"' "
     }
-
-    # Add monitoring/auditing and sysmon to the box
+   
+    # Install all monitoring agents
     provisioner "local-exec" {
     # Move to working directory were we have our setup for workstation
     working_dir = "${path.root}/ansible/"
     # Call out command to setup workstation based on our setup along with all agents and pass specific variables to various handlers.
-    command = "/bin/bash -c 'ANSIBLE_CONFIG=${path.root}/ansible.cfg AZURE_AD_USER=${local.config_file.local_admin_credentials.username} AZURE_PASSWORD=${local.config_file.local_admin_credentials.password} ansible-playbook domain-member.yml -v -t common,monitoring,osqueryagent,sysmon,wazuhagent,winlogbeat --extra-vars \"dc_internal_ip=${azurerm_network_interface.server.private_ip_address} wazuh_server_ip=${azurerm_network_interface.wazuh.private_ip_address}\"' "
+    command = "sleep 120; /bin/bash -c 'ANSIBLE_CONFIG=${path.root}/ansible.cfg ansible-playbook domain-member.yml -vvv -t monitoring,sysmon,wazuhagent --extra-vars \"dc_internal_ip=${azurerm_network_interface.server.private_ip_address} wazuh_server_ip=${azurerm_network_interface.wazuh.private_ip_address}\"'"
     }
-```
-
-Outside of primary Terraform provisioning process in [main.tf](../main.tf) we have patching process:
-
-```
-############################################################
-# Windows Patching Process
-############################################################
-# Patch systems outside of main provisioning so we can carry on with setup before that. 
-
-resource "null_resource" "patch-workstation" {
-    # Ensure this isn't triggered until workstations are created
-    depends_on = [azurerm_resource_group.resourcegroup, azurerm_virtual_machine.workstation]
+    
+    # Install all monitoring agents - we split this into 2 tasks.
     provisioner "local-exec" {
-    # Move to working directory were we have our setup for DC ansible
+    # Move to working directory were we have our setup for workstation
     working_dir = "${path.root}/ansible/"
-    # Call out command to setup dc based on our setup
-    command = "sleep 60; /bin/bash -c 'ANSIBLE_CONFIG=${path.root}/ansible.cfg AZURE_AD_USER=${local.config_file.local_admin_credentials.username} AZURE_PASSWORD=${local.config_file.local_admin_credentials.password} ansible-playbook domain-member.yml -v -t common,patch --extra-vars \"dc_internal_ip=${azurerm_network_interface.server.private_ip_address} wazuh_server_ip=${azurerm_network_interface.wazuh.private_ip_address}\"' "
+    # Call out command to setup workstation based on our setup along with all agents and pass specific variables to various handlers.
+    command = "sleep 120; /bin/bash -c 'ANSIBLE_CONFIG=${path.root}/ansible.cfg ansible-playbook domain-member.yml -vvv -t winlogbeat,velociraptorclient,osqueryagent --extra-vars \"dc_internal_ip=${azurerm_network_interface.server.private_ip_address} wazuh_server_ip=${azurerm_network_interface.wazuh.private_ip_address}\"'"
     }
-}
+    
+    # Reboot system. Extended wait time in case of slower workstations as various WinRM timeouts were observed here.
+    provisioner "local-exec" {
+    # Move to working directory were we have our setup for workstation
+    working_dir = "${path.root}/ansible/"
+    # Call out command to setup workstation based on our setup along with all agents and pass specific variables to various handlers.
+    command = "sleep 120; /bin/bash -c 'ANSIBLE_CONFIG=${path.root}/ansible.cfg ansible-playbook domain-member.yml -vvv -t reboot'"
+    }
 ```
 
 ## How to add more domain members ?
