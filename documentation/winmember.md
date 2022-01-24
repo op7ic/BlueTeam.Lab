@@ -88,9 +88,20 @@ workstation_configuration:
 During my tests I noticed that Azure appears to slow down boot time for some of the systems over time. Simply put, initially Azure creation is very quick but with subsequent rebuilding process it appears to slow down. To counter this effect, and reduce potential for any timeouts, when windows system is rebooted, the following timeout parameters are added to ensure that even if we have slow start, ansible playbooks won't quit the setup process:
 
 ```
-  win_reboot:
-    reboot_timeout: 3600
-    post_reboot_delay: 120
+    # Sleep for 5 minutes. This is to give time for workstation to set itself properly.
+    # In my experiments, WinRM was timing out a lot with 'connection refused' error here otherwise.
+    - name: Sleep
+      pause:
+        minutes: 5
+      tags: base  
+ 
+    # We add extra time here to wait for reboot in case of slower workstations. Our users can choose any rig they want, including 1GB RAM after all.
+    - name: Reboot machine if it has just joined the domain
+      win_reboot:
+        reboot_timeout: 3600
+        post_reboot_delay: 180
+      when: domain_state.reboot_required
+      tags: base
 ```
 
 If you would like to change this, please edit ansible setup file [ansible/roles/domain-member/tasks/main.yml](../ansible/roles/domain-member/tasks/main.yml).
