@@ -17,4 +17,4 @@ Please note that the same password, located uner ```wazuh_services_password``` v
 
 ## Wazuh Agent
 
-Wazuh agent is configured to ship logs to authomatically created Wazuh Server so during installation of MSI package, as directed by ```wazuh_admin.agent_url``` variable in [domain_setup.yml](../ansible/domain_setup.yml), IP of the Wazuh Server passed along as one of the parameters. The details of corresponding Ansible task can be found in[/ansible/roles/wazuhagent/tasks/main.yml](../ansible/roles/wazuhagent/tasks/main.yml) along with agent configuration options in [templates folder](../ansible/roles/wazuhagent/templates/).
+Wazuh agent is configured to ship logs to automatically created Wazuh Server so during installation of MSI package, as directed by ```wazuh_admin.agent_url``` variable in [domain_setup.yml](../ansible/domain_setup.yml), IP of the Wazuh Server passed along as one of the parameters. The details of corresponding Ansible task can be found in[/ansible/roles/wazuhagent/tasks/main.yml](../ansible/roles/wazuhagent/tasks/main.yml) along with agent configuration options in [templates folder](../ansible/roles/wazuhagent/templates/).

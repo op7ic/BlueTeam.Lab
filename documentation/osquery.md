@@ -40,7 +40,7 @@ osquery_download:
 
 Please note that Ansible deployment task, [ansible/roles/osqueryagent/tasks/main.yml](../ansible/roles/osqueryagent/tasks/main.yml), pulls a number of configuration files from [Palantir configuration GitHub repo](https://github.com/palantir/osquery-configuration).
 
-## How To Change SSL cetificate
+## How To Change SSL certificate
 
 By default pre-generated and self-signed certificates are copied in for client-server setup between OSQuery and Fleetdm. In order to change certificates please use following command to generate new ones and place in templates directory for OSQuery [ansible/roles/osqueryagent/templates/](../ansible/roles/osqueryagent/templates/) and Fleetdm server [ansible/roles/fleetserver/templates/](../ansible/roles/fleetserver/templates/) .
 

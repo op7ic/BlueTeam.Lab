@@ -7,7 +7,7 @@ Windows AD domain members (2x Windows 10 systems) are set to be join AD structur
 The following Terraform provisioning process in [main.tf](../main.tf) is configured for each workstation:
 
 ```
-    # We need to set provisioner to depend on DC and Wazuh completion. Otherwise it might not setup properly. Boxes can be made before that of course but joing domain requires DC to be alive and present. 
+    # We need to set provisioner to depend on DC and Wazuh completion. Otherwise, it might not setup properly. Boxes can be made before that but to join the domain, DC needs to be alive and present. 
     # Same goes for various connectors talking with our Wazuh/Velociraptor servers etc.
     depends_on = [azurerm_resource_group.resourcegroup, azurerm_virtual_machine.dc, azurerm_virtual_machine.wazuh]      
    

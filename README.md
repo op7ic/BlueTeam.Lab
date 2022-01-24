@@ -128,42 +128,46 @@ Once lab is constructed, Terraform will print out actual location of the systems
 ```
 Network Setup:
 
-Domain Controller = x.x.x.x
-Workstation1 = x.x.x.x
-Workstation2 = x.x.x.x
-Wazuh Server IP = x.x.x.x
-Wazuh Web Interface = https://x.x.x.x:443/
-Velociraptor Web Inteface: = https://x.x.x.x:10000/
-FleetDM Web Interface: = https://x.x.x.x:9999/
+Domain Controller = xx.xx.xx.xx
+Workstation DETECTION1: xx.xx.xx.xx
+Workstation DETECTION2: xx.xx.xx.xx
+Wazuh Server IP = xx.xx.xx.xx
+Wazuh Web Interface = https://xx.xx.xx.xx:443/
+Velociraptor Web Inteface: = https://xx.xx.xx.xx:10000/
+FleetDM Web Interface: = https://xx.xx.xx.xx:9999/
 
 Credentials:
 
 Domain Admin:
-	blueteam.lab\blueteam BlueTeamDetection0%%%
+    blueteam.lab\blueteam BlueTeamDetection0%%%
 Local Admin on Workstations:
-	localadministrator BlueTeamDetection0%%%
+    blueteam BlueTeamDetection0%%%
 Wazuh Server SSH Login:
-	blueteam BlueTeamDetection0%%%
+    blueteam BlueTeamDetection0%%%
 Wazuh Logins:
-	wazuh  BlueTeamDetection0%%%
-	admin  BlueTeamDetection0%%%
-	kibanaserver  BlueTeamDetection0%%%
-	kibanaro  BlueTeamDetection0%%%
-	logstash  BlueTeamDetection0%%%
-	readall  BlueTeamDetection0%%%
-	snapshotrestore  BlueTeamDetection0%%%
-	wazuh_admin  BlueTeamDetection0%%%
-	wazuh_user  BlueTeamDetection0%%%
+    wazuh  BlueTeamDetection0%%%
+    admin  BlueTeamDetection0%%%
+    kibanaserver  BlueTeamDetection0%%%
+    kibanaro  BlueTeamDetection0%%%
+    logstash  BlueTeamDetection0%%%
+    readall  BlueTeamDetection0%%%
+    snapshotrestore  BlueTeamDetection0%%%
+    wazuh_admin  BlueTeamDetection0%%%
+    wazuh_user  BlueTeamDetection0%%%
 Velociraptor Web Inteface Login:
-	blueteam BlueTeamDetection0%%%
+    blueteam BlueTeamDetection0%%%
 FleetDM Web Inteface Login:
-        blueteam@blueteam.lab BlueTeamDetection0%%%
+    blueteam@blueteam.lab BlueTeamDetection0%%%
 
 RDP to your domain controller:
-xfreerdp /v:x.x.x.x /u:blueteam.lab\\blueteam '/p:BlueTeamDetection0%%%' +clipboard /cert-ignore
+xfreerdp /v:xx.xx.xx.xx /u:blueteam.lab\\blueteam '/p:BlueTeamDetection0%%%' +clipboard /cert-ignore
 
-RDP to a workstation:
-xfreerdp /v:x.x.x.x /u:localadministrator '/p:BlueTeamDetection0%%%' +clipboard /cert-ignore
+
+RDP to Workstation DETECTION1: xx.xx.xx.xx
+xfreerdp /v:xx.xx.xx.xx /u:blueteam '/p:BlueTeamDetection0%%%' +clipboard /cert-ignore
+
+RDP to Workstation DETECTION2: xx.xx.xx.xx
+xfreerdp /v:xx.xx.xx.xx /u:blueteam '/p:BlueTeamDetection0%%%' +clipboard /cert-ignore
 ```
 
 ---
