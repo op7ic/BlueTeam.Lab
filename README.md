@@ -7,7 +7,7 @@
 
 # Purpose
 
-This project contains a set of **Terraform** and **Ansible** scripts to create an orchestrated BlueTeam Lab. The goal of this project is to provide red and blue teams with the ability to deploy ad-hoc detection lab to test various attacks and forensic artifacts on latest Windows environment and then to get 'SOC-like' view into generated data. 
+This project contains a set of **Terraform** and **Ansible** scripts to create an orchestrated BlueTeam Lab. The goal of this project is to provide the red and blue teams with the ability to deploy an ad-hoc detection lab to test various attacks and forensic artifacts on the latest Windows environment and then to get a 'SOC-like' view into generated data. 
 
 NOTE: This lab is deliberately designed to be insecure. Please do not connect this system to any network you care about. 
 
@@ -46,9 +46,9 @@ pip3 install pywinrm requests msrest msrestazure azure-cli
 
 # Building and Deploying BlueTeam.Lab
 
-Once all the [prerequisites](#Prerequisites) are installed perform the following series of steps:
+Once all the [prerequisites](#Prerequisites) are installed, perform the following series of steps:
 ```
-# Login to Azure from command line to ensure that access token is valid
+# Log in to Azure from command line to ensure that the access token is valid
 az login
 
 # Clone Repository and move to BlueTeam.Lab folder
@@ -57,19 +57,19 @@ git clone https://github.com/op7ic/BlueTeam.Lab.git && cd BlueTeam.Lab
 # Initialize Terraform
 terraform init
 
-# Create your lab using following command. 
+# Create your lab using the following command. 
 terraform apply -auto-approve
 
-# Verify layout of your enviroment using ansible
+# Verify the layout of your environment using Ansible
 cd ansible && ANSIBLE_CONFIG=./ansible.cfg ansible-inventory --graph -i inventory.azure_rm.yml -vvv && cd ../
 
 # To see IPs of individual hosts and other setup details use the following command: 
 cd ansible && ANSIBLE_CONFIG=./ansible.cfg ansible-inventory -i inventory.azure_rm.yml -vvv --list && cd ../
 
-# Once done, destroy your lab using following command:
+# Once done, destroy your lab using the following command:
 terraform destroy -auto-approve
 
-#NOTE: It will take about two houts to configure it all, depending on selected hardware.
+#NOTE: It will take about two hours to configure it all, depending on your selected hardware.
 ```
 
 # Deploying Different Windows Versions
@@ -99,15 +99,15 @@ Command ```az vm image list``` can be used to identify various OS versions for t
 # Features
 
 - Windows AD with two workstations connected to Windows domain in default setup.
-- Auditing policies configured based on [CIS Guide](https://www.cisecurity.org/blog/prepare-for-your-next-cybersecurity-compliance-audit-with-cis-resources/) to increase event visibility across Windows infrastructure. [Auditpol](https://www.ultimatewindowssecurity.com/wiki/page.aspx?spid=Auditpol) used to configured additional settings and PowerShell Transcript Logs enabled.
-- [Sysmon64](https://docs.microsoft.com/en-us/sysinternals/downloads/sysmon) deployed across infrastructure using latest [SwiftOnSecurity](https://github.com/SwiftOnSecurity/sysmon-config) configuration for Windows devices.
+- Auditing policies configured based on [CIS Guide](https://www.cisecurity.org/blog/prepare-for-your-next-cybersecurity-compliance-audit-with-cis-resources/) to increase event visibility across Windows infrastructure. [Auditpol](https://www.ultimatewindowssecurity.com/wiki/page.aspx?spid=Auditpol) used to configure additional settings and PowerShell Transcript Logs enabled.
+- [Sysmon64](https://docs.microsoft.com/en-us/sysinternals/downloads/sysmon) deployed across infrastructure using the latest [SwiftOnSecurity](https://github.com/SwiftOnSecurity/sysmon-config) configuration for Windows devices.
 - [Wazuh Server](https://wazuh.com/) configured and operational to collect logs from devices.
-- [Wazuh Agents](https://documentation.wazuh.com/current/installation-guide/wazuh-agent/wazuh-agent-package-windows.html) configured across infrastructure and feeding data into Wazuh server.
-- Firewall configured to only allow your own IP to access deployed systems. 
-- Flexible [domain configuration file](ansible/domain_setup.yml) allowing for easy changes to underlying configuration.
-- [OSQuery](https://osquery.readthedocs.io/en/stable/installation/install-windows/) and [FleetDM](https://github.com/fleetdm/fleet) installed across infrastructure, using configuration templates from [Palantir](https://github.com/palantir/osquery-configuration).
+- [Wazuh Agents](https://documentation.wazuh.com/current/installation-guide/wazuh-agent/wazuh-agent-package-windows.html) configured across infrastructure and feeding data into the Wazuh server.
+- Firewall configured to only allow your own IP to access the deployed systems. 
+- Flexible [domain configuration file](ansible/domain_setup.yml) allowing for easy changes to the underlying configuration.
+- [OSQuery](https://osquery.readthedocs.io/en/stable/installation/install-windows/) and [FleetDM](https://github.com/fleetdm/fleet) installed across the infrastructure, using configuration templates from [Palantir](https://github.com/palantir/osquery-configuration).
 - [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) Server configured and operational.
-- [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) Agents configured across infrastructure and feeding data into Velociraptor server.
+- [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) Agents configured across infrastructure and feeding data into the Velociraptor server.
 
 ---
 # Documentation
@@ -123,7 +123,7 @@ The following section describes various components making up this lab along with
 
 # Credentials
 
-Once lab is constructed, Terraform will print out actual location of the systems and associated credentials. Example output can be found below.
+Once lab is constructed, Terraform will print out actual location of the systems and associated credentials. An example output can be found below.
 
 ```
 Network Setup:
@@ -173,7 +173,7 @@ xfreerdp /v:xx.xx.xx.xx /u:blueteam '/p:BlueTeamDetection0%%%' +clipboard /cert-
 ---
 # Firewall Configuration
 
-The following table summarises a set of firewall rules applied across BlueTeamLab enviroment in default configuration. Please modify [main.tf](main.tf) file to add new firewall rules as needed in **Firewall Rule Setup** section.
+The following table summarises a set of firewall rules applied across the BlueTeamLab enviroment in default configuration. Please modify the [main.tf](main.tf) file to add new firewall rules as needed in  the **Firewall Rule Setup** section.
 
 | Rule Name | Network Security Group | Source Host | Source Port  | Destination Host | Destination Port |
 | ------------- | ------------- |  ------------- |  ------------- |  ------------- |  ------------- |
@@ -191,7 +191,7 @@ The following table summarises a set of firewall rules applied across BlueTeamLa
 | Allow-Velociraptor-GUI  | wazuh-nsg  | [Your Public IP](https://ipinfo.io/json) | * | Wazuh | 10000 |  
 | Allow-Fleet-GUI  | wazuh-nsg  | [Your Public IP](https://ipinfo.io/json) | * | Wazuh | 9999 |  
 
-Internally the following static IPs and hostnames are used in 10.0.0.0/16 range for this enviroment:
+Internally the following static IPs and hostnames are used in 10.0.0.0/16 range for this enviroment in the default configuration:
 
 | Host  | Role | Internal IP |
 | ------------- | ------------- | ------------- |
@@ -203,7 +203,7 @@ Internally the following static IPs and hostnames are used in 10.0.0.0/16 range 
 ---
 # User Configuration
 
-The following default credentials are created during installation. Printout of actual, configured credentials, will be displayed after full deployment process completes. 
+The following default credentials are created during installation. Printout of actual configured credentials will be displayed after the full deployment process completes. 
 
 | Host  | Login | Password | Role |
 | ------------- | ------------- | ------------- | ------------- |
@@ -223,7 +223,7 @@ The following default credentials are created during installation. Printout of a
 | Wazuh  | blueteam | BlueTeamDetection0%%% |  Velociraptor Web Portal login |
 | Wazuh  | blueteam@blueteam.lab | BlueTeamDetection0%%% |  FleetDM Web Portal login |
 
-In order to modify default credentials please change usernames and passwords in [domain_setup.yml](ansible/domain_setup.yml) file.
+In order to modify the default credentials, change usernames and passwords in [domain_setup.yml](ansible/domain_setup.yml) file.
 
 # Screenshots
 
@@ -240,7 +240,7 @@ In order to modify default credentials please change usernames and passwords in 
 
 # Contributing
 
-Contributions, fixes, and improvements can be submitted directly against this project as a GitHub issue or pull request.
+Contributions, fixes, and improvements can be submitted directly for this project as a GitHub issue or a pull request.
 
 # Directory Structure
 
@@ -352,22 +352,22 @@ Contributions, fixes, and improvements can be submitted directly against this pr
   - Re-run terraform commands ```terraform destroy -auto-approve && terraform apply -auto-approve``` to destroy and re-create the lab. This error seems to show up when Azure doesn't clean up all the disks properly so there are leftover resources with the same name.
 
 - I get ```Operation 'startTenantUpdate' is not allowed on VM 'domain-controller' since the VM is marked for deletion. You can only retry the Delete operation (or wait for an ongoing one to complete).``` or something similar to this error.
-  - Re-run terraform commands ```terraform destroy -auto-approve && terraform apply -auto-approve``` to destroy and re-create the lab. This error seems to show up when Azure doesn't clean up all of the resources properly so there are leftovers which needs to be destroyed before lab is created due to clash in names and/or locations.
+  - Re-run terraform commands ```terraform destroy -auto-approve && terraform apply -auto-approve``` to destroy and re-create the lab. This error seems to show up when Azure doesn't clean up all of the resources properly so there are leftovers which need to be destroyed before the lab is created due to clashes in names and/or locations.
 
 - I get ```Network security group windows-nsg cannot be deleted because old references for the following Nics``` or something similar to this error.
-  - Re-run terraform commands ```terraform destroy -auto-approve && terraform apply -auto-approve``` to destroy and re-create the lab. This error seems to show up when Azure doesn't clean up all of the resources properly so there are leftovers which needs to be destroyed before lab is created due to clash in names and/or locations.
+  - Re-run terraform commands ```terraform destroy -auto-approve && terraform apply -auto-approve``` to destroy and re-create the lab. This error seems to show up when Azure doesn't clean up all of the resources properly so there are leftovers which need to be destroyed before the lab is created due to clashes in names and/or locations.
   
 - Why Azure?
   - [Free Credits are available with trial account](https://azure.microsoft.com/en-us/free/)
 
 - How do I modify network segments, deployment size or other variables?
-  - Modify Terraform [variables](variables.tf) file to change your setup. Alternatively, each variable can be changed during runtime by appending ```-var``` to ```terraform apply```. For example, ```terraform apply --auto-approve -var="region=East US 2"``` would modify region to be different then the default set in [variables](variables.tf) file. Using a chain of ```-var``` parameters, entire setup, including network ranges, operating systems and VM size can be changed.
+  - Modify the Terraform [variables](variables.tf) file to change your setup. Alternatively, each variable can be changed during runtime by appending ```-var``` to ```terraform apply```. For example, ```terraform apply --auto-approve -var="region=East US 2"``` would modify a region to be different then the default set in the [variables](variables.tf) file. The entire setup, including network ranges, operating systems and the VM size can be changed, using a chain of the ```-var``` parameters.
    
-- How to find SKUs for specific deployment?
+- How to find SKUs for a specific deployment?
   - Use Azure command ```az vm list-skus --location westeurope --all --output table``` to find SKUs which are available for your deployment.
 
 - I get ``` Max retries exceeded with url: /wsman``` and then connection gets refused when building a system. 
-  - Unfortunately winrm limitations means that, on occasion, winrm will simply stop working as expected and instead connections will freeze up so that scripts can't be executed properly. Rerun ```terraform apply -auto-approve``` to repair damaged host.
+  - Unfortunately winrm limitations mean that, on occasion, winrm will simply stop working as expected and instead connections will freeze up so that scripts can't be executed properly. Rerun ```terraform apply -auto-approve``` to repair the damaged host.
   
 # Sources of Inspiration and Thanks
 
