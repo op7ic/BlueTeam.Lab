@@ -1,4 +1,4 @@
-#OSQuery
+# OSQuery
 
 Fleet-managed instance of OSQuery is deployed across every host in BlueTeam.Lab system and is configured to log data to Fleet Manager installed on the same server where Wazuh instance is.
 
