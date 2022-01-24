@@ -1,3 +1,7 @@
+############################################################
+# Defualt config for various settings such as LAN segments, location of domain config file etc.
+############################################################
+
 variable "domain_config_file" {
     description = "Path to the primary configuration file for DC"
     default = "ansible/domain_setup.yml"
