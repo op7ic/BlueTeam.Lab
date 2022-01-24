@@ -366,7 +366,7 @@ Contributions, fixes, and improvements can be submitted directly for this projec
   - Use Azure command ```az vm list-skus --location westeurope --all --output table``` to find SKUs which are available for your deployment.
 
 - I get ``` Max retries exceeded with url: /wsman``` and then connection gets refused when building a system. 
-  - Unfortunately winrm limitations mean that, on occasion, winrm will simply stop working as expected and instead connections will freeze up. As a result, execution won't behave properly. Rerun ```terraform apply -auto-approve``` to repair the damaged host.
+  - Unfortunately WinRM limitations mean that, on occasion, WinRM will simply stop working as expected and instead connections will freeze up. As a result, execution won't behave properly. Rerun ```terraform apply -auto-approve``` to repair the damaged host.
   
 # Sources of Inspiration and Thanks
 
