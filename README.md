@@ -159,9 +159,8 @@ Velociraptor Web Inteface Login:
 FleetDM Web Inteface Login:
     blueteam@blueteam.lab BlueTeamDetection0%%%
 
-RDP to your domain controller:
+RDP to Domain Controller:
 xfreerdp /v:xx.xx.xx.xx /u:blueteam.lab\\blueteam '/p:BlueTeamDetection0%%%' +clipboard /cert-ignore
-
 
 RDP to Workstation DETECTION1: xx.xx.xx.xx
 xfreerdp /v:xx.xx.xx.xx /u:blueteam '/p:BlueTeamDetection0%%%' +clipboard /cert-ignore
