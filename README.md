@@ -112,7 +112,7 @@ Command ```az vm image list``` can be used to identify various OS versions for t
 ---
 # Documentation
 
-The following section describes various components making up this lab along with details on how to change configuration files to modify the setup
+The following section describes various components making up this lab along with details on how to change configuration files to modify the setup:
 
 - [OSQuery and Fleetdm Server](documentation/osquery.md)
 - [Wazuh Server and Wazuh Agent](documentation/wazuh.md)
