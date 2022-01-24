@@ -24,7 +24,7 @@ As Velociraptor agent configuration, encryption keys and other details are deriv
 
 ## Changing Agent and Server Settings
 
-Please following official guidance for [Agent](https://docs.velociraptor.app/docs/deployment/clients/) and [Server](https://docs.velociraptor.app/docs/deployment/self-signed/) setup and ensure that where needed, ```{{ wazuh_server_ip }}``` variable is set appropriately in both client and server config files so that automatic setup can take care of connecting clients and servers without need for manual intervention.
+Please follow official guidance for [Agent](https://docs.velociraptor.app/docs/deployment/clients/) and [Server](https://docs.velociraptor.app/docs/deployment/self-signed/) setup and ensure that where needed, ```{{ wazuh_server_ip }}``` variable is set appropriately in both client and server config files so that automatic setup can take care of connecting clients and servers without need for manual intervention.
 
 For Server, the following variables need to be set:
 ```
