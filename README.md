@@ -99,16 +99,16 @@ Command ```az vm image list``` can be used to identify various OS versions for t
 # Features
 
 - Windows AD with two workstations connected to Windows domain in default setup.
+- Flexible [domain configuration file](ansible/domain_setup.yml) allowing for easy changes to the underlying configuration.
 - Auditing policies configured based on [CIS Guide](https://www.cisecurity.org/blog/prepare-for-your-next-cybersecurity-compliance-audit-with-cis-resources/) to increase event visibility across Windows infrastructure. [Auditpol](https://www.ultimatewindowssecurity.com/wiki/page.aspx?spid=Auditpol) used to configure additional settings and PowerShell Transcript Logs enabled.
 - [Sysmon64](https://docs.microsoft.com/en-us/sysinternals/downloads/sysmon) deployed across infrastructure using the latest [SwiftOnSecurity](https://github.com/SwiftOnSecurity/sysmon-config) configuration for Windows devices.
 - [Wazuh Server](https://wazuh.com/) configured and operational to collect logs from devices.
 - [Wazuh Agents](https://documentation.wazuh.com/current/installation-guide/wazuh-agent/wazuh-agent-package-windows.html) configured across infrastructure and feeding data into the Wazuh server.
 - Firewall configured to only allow your own IP to access the deployed systems. 
-- Flexible [domain configuration file](ansible/domain_setup.yml) allowing for easy changes to the underlying configuration.
 - [OSQuery](https://osquery.readthedocs.io/en/stable/installation/install-windows/) and [FleetDM](https://github.com/fleetdm/fleet) installed across the infrastructure, using configuration templates from [Palantir](https://github.com/palantir/osquery-configuration).
 - [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) Server configured and operational.
 - [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) Agents configured across infrastructure and feeding data into the Velociraptor server.
-
+- WinLogBeat configured to log data into Elastic instance.
 ---
 # Documentation
 
