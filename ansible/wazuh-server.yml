@@ -1,0 +1,11 @@
+---
+- name: Configure Wazuh Server
+  hosts: wazuh
+  gather_facts: no
+  roles:
+  - role: fleetserver
+    tags: [ fleetserver ]
+  - role: wazuhserver
+    tags: [ wazuhserver ]
+  - role: velociraptorserver
+    tags: [ velociraptorserver ]

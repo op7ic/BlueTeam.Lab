@@ -1,0 +1,4 @@
+velociraptor_debian_installer_path: /tmp/velociraptor
+velociraptor_windows_installer_path: C:\Windows\Temp\velociraptor.msi
+velociraptor_debian_installer_config_path: /tmp/serverconfig.yml
+velociraptor_windows_installer_config_path: C:\Windows\Temp\velociraptor.config.yml

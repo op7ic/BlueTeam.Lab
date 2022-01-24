@@ -1,0 +1,93 @@
+############################################################
+# Inputs. Tag: wazuhserver
+############################################################
+---
+- name: Attempt to configure wazuh agent monitoring. Fail and repeat if needed.
+  block:
+    - name: set fact
+      set_fact:
+        include_wazuhserver_install_counter: "{{ 0 if include_wazuhserver_install_counter is undefined else include_wazuhserver_install_counter|default(0)|int + 1 }}"
+      tags: wazuhserver
+   
+    - name: Domain configuration file
+      include_vars:
+        file: ../../../domain_setup.yml
+        name: config_file
+      tags: wazuhserver
+      
+    - name: Read Config File and get credentials
+      set_fact:
+        ansible_user: "{{ config_file.wazuh_admin.username }}"
+        ansible_password: "{{ config_file.wazuh_admin.password }}"
+        service_password: "{{ config_file.wazuh_admin.wazuh_services_password }}"
+      tags: wazuhserver
+     
+############################################################
+# Install Wazuh Server. Tag: wazuhserver
+############################################################
+    - name: Copy Wazuh installation script
+      copy:
+        src: ../templates/unattended-installation.sh
+        dest: /tmp/
+        owner: root
+        group: root
+        mode: 0644
+      tags: wazuhserver
+
+    # Password file is modified to contain static passwords
+    - name: Copy password change file
+      template:
+        src: ../templates/wazuh-passwords-tool.sh.j2
+        dest: /tmp/wazuh-passwords-tool.sh
+        owner: root
+        group: root
+        mode: 0644
+      tags: wazuhserver
+      
+    # Install Wazuh
+    - name: Installing Wazuh - Step 1
+      command: chmod +x /tmp/unattended-installation.sh
+      tags: wazuhserver
+      
+    # Install Wazuh
+    - name: Installing Wazuh - Step 2
+      command: chmod +x /tmp/wazuh-passwords-tool.sh
+      tags: wazuhserver
+      
+    # Install Wazuh - we need elevated privs here.
+    - name: Installing Wazuh - Step 3
+      become: yes
+      command: bash /tmp/unattended-installation.sh
+      tags: wazuhserver
+      
+    # Copy sysmon rules
+    # https://github.com/sametsazak/sysmon
+    - name: Copy sysmon sigma rules
+      copy:
+        src: ../templates/sysmon_rules.xml
+        dest: /var/ossec/etc/rules/local_rules.xml
+        owner: ossec
+        group: ossec
+        mode: 0660
+      tags: wazuhserver
+
+    # Install Wazuh - restart service
+    - name: Installing Wazuh - Step 4
+      become: yes
+      command: systemctl restart wazuh-manager.service
+      tags: wazuhserver
+      
+  rescue:
+    - include_tasks: 
+        file: roles/wazuhserver/tasks/main.yaml
+        apply:
+          tags:
+            - wazuhserver
+      when: include_wazuhserver_install_counter|int < include_max|default(10)|int
+      tags: wazuhserver
+      
+    - fail:
+        msg: Failed to install Wazuh Server after 10 attempts.
+      when: include_wazuhserver_install_counter|int >= include_max|default(10)|int
+      tags: wazuhserver
+  tags: wazuhserver

@@ -1,0 +1,237 @@
+---  
+############################################################
+# Base actions. Tag: base
+############################################################
+- name: Attempt to configure domain controller. Repeat on fail if needed.
+  block:
+    - name: set fact
+      set_fact:
+        include_dc_install_counter: "{{ 0 if include_dc_install_counter is undefined else include_dc_install_counter|default(0)|int + 1 }}"
+      tags: base
+     
+    - name: Domain configuration file
+      include_vars:
+        file: ../../../domain_setup.yml
+        name: config_file
+      tags: base
+      
+    - name: Read Config File and get credentials
+      set_fact:
+        ansible_user: "{{ config_file.local_admin_credentials.username }}"
+        ansible_password: "{{ config_file.local_admin_credentials.password }}"
+      tags: base
+
+    # Needs to be performed after the set_fact block which sets up the remote user and password to use
+    - name: Gather remote facts
+      setup: {}
+      tags: base
+      
+    # We already have WinRM at this point but invoking ConfigureRemotingForAnsible just in case. All this will do is to setup FW rules and create SSL cert. 
+    - name: Download ConfigureRemotingForAnsible
+      win_get_url:
+        url: "https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"
+        dest: C:\windows\temp\ConfigureRemotingForAnsible.ps1
+      tags: base 
+    
+    - name: Run ConfigureRemotingForAnsible
+      win_command: cmd.exe /c powershell.exe -nop -ExecutionPolicy ByPass -File C:\windows\temp\ConfigureRemotingForAnsible.ps1
+      tags: base 
+      
+    # As we might have old windows OS boxes, we use different syntax for winrm settings. Some will error out. 
+    # These limits should never be hit of course. 
+    - name: set winrm timeouts 1
+      win_command: cmd.exe /c winrm set winrm/config @{MaxTimeoutms="350000"}
+      ignore_errors: yes
+      tags: base
+    - name: set winrm timeouts 2
+      win_command: cmd.exe /c winrm set winrm/config/service @{MaxConcurrentOperationsPerUser="500"}
+      ignore_errors: yes
+      tags: base
+    - name: set winrm timeouts 3
+      win_command: cmd.exe /c winrm set winrm/config/Service @{MaxConcurrentOperations="500"}
+      ignore_errors: yes
+      tags: base
+    - name: set winrm timeouts 4
+      win_command: cmd.exe /c winrm set winrm/config/service @{AllowUnencrypted="true"}
+      ignore_errors: yes  
+      tags: base
+    - name: set winrm timeouts 5
+      win_command: cmd.exe /c winrm set winrm/config/winrs @{MaxShellsPerUser="400"}
+      ignore_errors: yes 
+      tags: base      
+    - name: set winrm timeouts 6
+      win_command: cmd.exe /c winrm set winrm/config/winrs @{MaxConcurrentUsers="300"}
+      ignore_errors: yes   
+      tags: base      
+    - name: set winrm timeouts 7
+      win_command: cmd.exe /c winrm set winrm/config/winrs @{MaxMemoryPerShellMB="512"}
+      ignore_errors: yes 
+      tags: base      
+      
+    # Install features we need for DC
+    - name: Install features for Windows
+      win_feature:
+        name: "{{ item }}"
+        state: present
+      with_items:
+      - AD-Domain-Services
+      - RSAT-AD-AdminCenter
+      - RSAT-ADDS-Tools
+      tags: base
+      
+    # Create Safe Mode Password
+    - name: Safe Mode Password
+      set_fact:
+        safe_mode_password: "{{ config_file.safe_mode_pass }}"
+
+    # Create Domain name
+    - name: Ensure domain is created
+      win_domain:
+        dns_domain_name: "{{ config_file.domain_fqdn }}"
+        safe_mode_password: "{{ config_file.safe_mode_pass }}"
+      register: domain_creation
+      tags: base
+
+    - name: Reboot System
+      win_reboot: {}
+      when: domain_creation.reboot_required
+      tags: base
+      
+    # Promote DC
+    - name: Ensure domain controller works
+      win_domain_controller:
+        dns_domain_name: "{{ config_file.domain_fqdn }}"
+        domain_admin_user: "{{ config_file.local_admin_credentials.username }}@{{ config_file.domain_fqdn }}"
+        domain_admin_password: "{{ config_file.local_admin_credentials.password }}"
+        safe_mode_password: "{{ config_file.safe_mode_pass }}"
+        state: domain_controller
+      register: dc_promotion
+      tags: base
+
+    # Reboot after DC promo. 
+    # It might take a bit of time so let's make sure that its all good to go.
+    - name: Reboot System
+      win_reboot:
+        reboot_timeout: 3600
+        post_reboot_delay: 120
+      when: domain_creation.reboot_required
+      tags: base
+      
+      
+    # Make sure AD module is installed for PowerShell
+    - name: Ensure xActiveDirectory is installed
+      win_psmodule:
+        name: xActiveDirectory
+        state: present
+      tags: base
+
+    # Wait for domain
+    - name: Wait for domain to be available
+      win_dsc:
+        resource_name: xWaitForADDomain
+        DomainName: "{{ config_file.domain_fqdn }}"
+        RetryCount: 100
+        RetryIntervalSec: 10
+      tags: base
+
+    # Sleep for 1 minutes
+    - name: Sleep
+      pause:
+        minutes: 1
+      tags: base  
+
+  rescue:
+    - include_tasks: 
+        file: roles/domain-controller/tasks/main.yml
+        apply:
+          tags:
+            - base
+      when: include_dc_install_counter|int < include_max|default(10)|int
+      tags: base
+      
+    - fail:
+        msg: Failed to install base DC after 10 attempts.
+      when: include_dc_install_counter|int >= include_max|default(10)|int
+      tags: base
+  tags: base  
+  
+############################################################
+# Initial actions post-DC creation. Tag: initialize
+############################################################
+- name: Attempt to init post-DC elevation domain controller. Repeat on fail if needed.
+  block:
+    - name: set fact
+      set_fact:
+        include_dc_install_counter_init: "{{ 0 if include_dc_install_counter_init is undefined else include_dc_install_counter_init|default(0)|int + 1 }}"
+      tags: initialize
+
+    - name: Domain configuration file
+      include_vars:
+        file: ../../../domain_setup.yml
+        name: config_file
+      tags: initialize
+      
+    - name: Read Config File and get credentials
+      set_fact:
+        ansible_user: "{{ config_file.local_admin_credentials.username }}"
+        ansible_password: "{{ config_file.local_admin_credentials.password }}"
+      tags: initialize
+
+    # Needs to be performed after the set_fact block which sets up the remote user and password to use
+    - name: Gather remote facts
+      setup: {}
+      tags: initialize
+
+    # Once system is patched we can move on with other config options
+    - name: Check if domain is available
+      win_dsc:
+        resource_name: xWaitForADDomain
+        DomainName: "{{ config_file.domain_fqdn }}"
+        RetryCount: 100
+        RetryIntervalSec: 10
+      tags: initialize
+
+    - name: Set silly password policy
+      win_command: powershell.exe -
+      args:
+        stdin: 'Set-ADDefaultDomainPasswordPolicy -MinPasswordLength 5 -ComplexityEnabled $False -Identity "{{ config_file.domain_fqdn }}"'
+      tags: initialize
+
+    - name: Set domain root path
+      set_fact:
+        domain_root_path: DC={{ config_file.domain_fqdn.split('.') | join(',DC=') }}
+      tags: initialize
+
+    - name: Ensure OUs exist
+      win_dsc:
+        resource_name: xADOrganizationalUnit
+        Name: "{{ item.split(',')[0].split('=')[1] }}"
+        Path: "{{ item.split(',') | reject('search', item.split(',')[0]) | map('regex_replace', '(.+)', '\\1,') | join('') }}{{ domain_root_path }}"
+        ProtectedFromAccidentalDeletion: no
+      with_items: "{{ config_file.organizational_units }}"
+      tags: initialize
+
+    - name: Ensure domain users exist
+      win_domain_user:
+        name: "{{ item.username }}"
+        password: "{{ item.password | default(item.username) }}"
+        path: "{{ item.OU | default('CN=Users') }},{{ domain_root_path }}"
+        enabled: yes
+        password_never_expires: yes
+      with_items: "{{ config_file.domain_user_credentials }}"
+      tags: initialize
+
+  rescue:
+    - include_tasks: 
+        file: roles/domain-controller/tasks/main.yml
+        apply:
+          tags:
+            - initialize          
+      when: include_dc_install_counter_init|int < include_max|default(10)|int
+      tags: initialize
+      
+    - fail:
+        msg: Failed to initalize DC after 10 attempts.
+      when: include_dc_install_counter_init|int >= include_max|default(10)|int
+      tags: initialize        
+  tags: initialize  

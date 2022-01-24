@@ -1,0 +1,125 @@
+############################################################
+# Domain configuration options
+# Instructions: Use options below to configure your deployment enviroment
+############################################################
+
+# FQDN of Windows domain
+domain_fqdn: blueteam.lab
+
+# DC hostname
+dc_name: PDC-1
+
+# Safe Mode Password
+safe_mode_pass: BlueTeamPassword0%%%
+
+# Firewall setup
+enable_windows_firewall: false
+
+
+# Domain users present our domain tree.
+# Passwords are set in a common format "Blue<username>1234%%%"
+domain_user_credentials:
+- username: john
+  password: BlueJohn1234%%%
+- username: karen
+  password: BlueKaren1234%%%
+- username: florence
+  password: BlueFlorence1234%%%
+- username: scott
+  password: BlueScott1234%%%
+- username: jay
+  password: BlueJay1234%%%
+- username: oliver
+  password: BlueOliver1234%%%
+- username: kevin
+  password: BlueKevin1234%%%
+
+# Domain group contain all users
+domain_groups:
+- dn: CN=Users
+  members: [john, karen, florence, scott, jay, oliver, kevin]
+  
+# OU (empty)
+organizational_units: {}
+
+# Credentials of the local admin created on workstation, uses the same user/password as Domain Admin. 
+# This is the default local admin account that gets promoted on the DC.
+local_admin_credentials:
+  username: blueteam
+  password: BlueTeamDetection0%%%
+
+# Workstations to create and to domain-join. Users john, karen, florence are local admins on these systems.
+workstation_configuration:
+- name: DETECTION1
+  local_admins: [john, karen, florence]
+- name: DETECTION2
+  local_admins: [john, karen, florence]
+
+
+############################################################
+# Agents and Security tools configuration options
+# Instructions: Use options below to configure your deployment enviroment
+############################################################
+
+# Sysmon configuration options. This options allows you to set up where to get Sysmon binary and configuration files from. 
+sysmon:
+  installer_url: https://live.sysinternals.com/Sysmon64.exe
+  config_url: https://raw.githubusercontent.com/SwiftOnSecurity/sysmon-config/master/sysmonconfig-export.xml
+
+# Setup for Wazuh Server and Agent. Versions will change so you might need to update this URL with time.
+wazuh_admin:
+  username: blueteam
+  password: BlueTeamDetection0%%%
+  wazuh_services_password: BlueTeamDetection0%%%
+  agent_url: https://packages.wazuh.com/4.x/windows/wazuh-agent-4.2.5-1.msi
+  
+# Velociraptor server/client binary location. Versions will change so you might need to update this URL with time.
+velociraptor_server:
+  server_download: https://github.com/Velocidex/velociraptor/releases/download/v0.6.3-rc1/velociraptor-v0.6.3-rc1-linux-amd64
+  client_download: https://github.com/Velocidex/velociraptor/releases/download/v0.6.2/velociraptor-v0.6.2-windows-amd64.msi
+  username: blueteam
+  password: BlueTeamDetection0%%%
+
+# WinLogBeat setup
+# NOTE: 
+# There is a problem with connecting standard WinLogBeat to OSS stack. So OSS version of winlogbeat needs to be used.
+# https://discuss.opendistrocommunity.dev/t/problem-with-logstash-and-opendistro-elasticsearch/6265/5
+# By default Wazuh comes with Elastic version 7.10 so we use connector with the same version.
+# Username and password should come from Wazuh setup as this user will need permission to create index and write data to it for Elastic.
+winlogbeat:
+  winlog_beat_url: https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-oss-7.10.2-windows-x86_64.msi
+  packet_beat_url: https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-oss-7.10.2-windows-x86_64.msi
+  file_beat_url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-oss-7.10.2-windows-x86_64.msi
+  elastic_user: admin
+  elastic_password: BlueTeamDetection0%%%
+
+# FleetDM Fleet Setup
+Fleetdm:
+  enroll_secret: 7548392034598123
+  server_download_url: https://github.com/fleetdm/fleet/releases/download/fleet-v4.8.0/fleet_v4.8.0_linux.tar.gz
+  fleet_ctl_download_url: https://github.com/fleetdm/fleet/releases/download/fleet-v4.8.0/fleetctl_v4.8.0_linux.tar.gz
+  server_install_folder: /opt/fleetdm
+  redis_address: 127.0.0.1:6379
+  username: blueteam@blueteam.lab
+  account_name: blueteam
+  password: BlueTeamDetection0%%%
+  org: blueteam
+  mysql:
+    address: 127.0.0.1:3306
+    database: fleetdm
+    username: blueteam
+    password: BlueTeamDetection0%%%
+  webserver:
+    port: 9999
+    listener_address: 0.0.0.0
+    tls: true
+  osquery:
+    result_log_file: /opt/fleetdm/osquery_result.log
+    status_log_file: /opt/fleetdm/osquery_status.log
+  logging:
+    json: true
+    
+# OSQuery download URL. Versions will change so you might need to update this URL with time.
+osquery_download:
+  windows_url: https://pkg.osquery.io/windows/osquery-5.1.0.msi
+  debian_url: https://pkg.osquery.io/deb/osquery_5.1.0-1.linux_amd64.deb

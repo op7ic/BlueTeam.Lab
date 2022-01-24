@@ -1,0 +1,2 @@
+osquery_agent_path: C:\Windows\Temp\osquery.msi
+config_file_path: C:\Windows\Temp\osquery.conf

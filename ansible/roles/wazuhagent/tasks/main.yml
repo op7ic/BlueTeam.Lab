@@ -1,0 +1,85 @@
+############################################################
+# Install Wazuh Agent. Tag: wazuhagent
+############################################################
+---
+- name: Attempt to configure wazuh agent monitoring. Fail and repeat if needed.
+  block:
+    - name: set fact
+      set_fact:
+        include_wazuhagent_install_counter: "{{ 0 if include_wazuhagent_install_counter is undefined else include_wazuhagent_install_counter|default(0)|int + 1 }}"
+        wazuh_server_ip: "{{ '10.0.10.100' if wazuh_server_ip is undefined else wazuh_server_ip|default('10.0.10.100')}}"
+      tags: wazuhagent
+
+    - name: Domain configuration file
+      include_vars:
+        file: ../../../domain_setup.yml
+        name: config_file
+      tags: wazuhagent
+      
+    - name: Read Config File and get credentials
+      set_fact:
+        wazuh_agent_url: "{{ config_file.wazuh_admin.agent_url }}"
+        ansible_user: "{{ config_file.local_admin_credentials.username }}"
+        ansible_password: "{{ config_file.local_admin_credentials.password }}"
+      tags: wazuhagent
+
+    # Test if binary is there
+    - name: Test whether Wazuh-agent executable is present
+      win_stat:
+        path: "{{ wazuh_agent_path }}"
+      register: wazuh_executable
+      tags: wazuhagent
+      
+    # Download Wazuh-Agent
+    - name: Download Wazuh from main repo
+      win_get_url:
+        url: "{{ wazuh_agent_url }}"
+        dest: "{{ wazuh_agent_path }}"
+      when: not wazuh_executable.stat.exists
+      tags: wazuhagent
+      
+    # Install Wazuh-Agent.
+    - name: Install Wazuh-Agent
+      win_command: "msiexec.exe /i {{ wazuh_agent_path }} /q WAZUH_MANAGER=\"{{ wazuh_server_ip }}\" WAZUH_AGENT_GROUP=\"BlueTeamLab\" WAZUH_REGISTRATION_SERVER=\"{{ wazuh_server_ip }}\""
+      register: output_msi
+      # For some reason installation returns error code 1603 = already installed instead of 1 or 0. It means that even if installation is working, ansible will complain so we need to ignore_errors for this to work.
+      ignore_errors: yes
+      tags: wazuhagent
+
+    # Install Wazuh-Agent. We set it to reinstall if needed as sometimes we get error about installation already there. This is just a backup method to make sure agent is always installed.
+    - name: Install Wazuh-Agent
+      win_command: "msiexec.exe /i {{ wazuh_agent_path }} /q WAZUH_MANAGER=\"{{ wazuh_server_ip }}\" WAZUH_AGENT_GROUP=\"BlueTeamLab\" WAZUH_REGISTRATION_SERVER=\"{{ wazuh_server_ip }}\" REINSTALL=ALL REINSTALLMODE=A"
+      register: output_msi
+      # For some reason installation returns error code 1603 = already installed instead of 1 or 0. It means that even if installation is OK, ansible will complain so we need to ignore_errors set in case Ansible tries to report exception.
+      ignore_errors: yes
+      tags: wazuhagent
+      
+    # Copy over Wazuh config
+    - name: Copy over Wazuh config file
+      win_template:
+        src: ./templates/ossec.conf.j2
+        dest: C:\Program Files (x86)\ossec-agent\ossec.conf
+      tags: wazuhagent 
+      
+    # Start the service
+    - name: Restarting WazuhSvc service
+      win_service:
+        name: WazuhSvc
+        state: restarted
+      tags: wazuhagent
+  
+  rescue:
+    - include_tasks: 
+        file: roles/wazuhagent/tasks/main.yml
+        apply:
+          tags:
+            - wazuhagent
+      when: include_wazuhagent_install_counter|int < include_max|default(10)|int
+      tags: wazuhagent
+      
+    - fail:
+        msg: Failed to install Wazuh Agent after 10 attempts.
+      when: include_wazuhagent_install_counter|int >= include_max|default(10)|int
+      tags: wazuhagent      
+  tags: wazuhagent
+  

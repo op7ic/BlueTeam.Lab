@@ -1,0 +1,104 @@
+---
+############################################################
+# Install Velociraptor Client. Tag: velociraptorclient
+############################################################
+- name: Attempt to install Velociraptor Client. Fail and repeat if needed.
+  block:
+    - name: set fact
+      set_fact:
+        include_velociraptorclient_install_counter: "{{ 0 if include_velociraptorclient_install_counter is undefined else include_velociraptorclient_install_counter|default(0)|int + 1 }}"
+      tags: velociraptorclient
+      
+    - name: Domain configuration file
+      include_vars:
+        file: ../../../domain_setup.yml
+        name: config_file
+      tags: velociraptorclient
+      
+    - name: Read config file and get download location for Velociraptor client
+      set_fact:
+        velociraptor_windows_msi: "{{ config_file.velociraptor_server.client_download }}"
+        ansible_user: "{{ config_file.local_admin_credentials.username }}"
+        ansible_password: "{{ config_file.local_admin_credentials.password }}"
+      tags: velociraptorclient      
+    
+    # Test if binary is there
+    - name: Test whether Velociraptor-agent executable is present
+      win_stat:
+        path: "{{ velociraptor_windows_installer_path }}"
+      register: velociraptor_executable
+      tags: velociraptorclient
+
+    # Download Velociraptor Client
+    - name: Download Velociraptor from main repo
+      win_get_url:
+        url: "{{ velociraptor_windows_msi }}"
+        dest: "{{ velociraptor_windows_installer_path }}"
+      when: not velociraptor_executable.stat.exists
+      timeout: 60
+      tags: velociraptorclient
+
+    # Install Velociraptor Client
+    - name: Install Client
+      win_command: "msiexec.exe /i {{ velociraptor_windows_installer_path }} /q"
+      tags: velociraptorclient
+      
+    # Install Config File. Standard MSI enforces config location: C:\Program Files\Velociraptor\Velociraptor.config.yaml
+    - name: Copy Pre-Generated Velociraptor Client config
+      template:
+        src: ../templates/clientconfig.yml.j2
+        dest: C:\Program Files\Velociraptor\Velociraptor.config.yaml
+      tags: velociraptorclient
+
+    # Start the service
+    - name: Restart a service
+      win_service:
+        name: Velociraptor
+        state: started
+        start_mode: auto
+      tags: velociraptorclient
+
+    # Repeat setup just in case as we noticed that installation sometimes fails without any error.
+    # Download Velociraptor Client
+    - name: Download Velociraptor from main repo
+      win_get_url:
+        url: "{{ velociraptor_windows_msi }}"
+        dest: "{{ velociraptor_windows_installer_path }}"
+      timeout: 240
+      tags: velociraptorclient
+
+    # re-install Velociraptor Client
+    - name: Install Client
+      win_command: "msiexec.exe /i {{ velociraptor_windows_installer_path }} /q REINSTALL=ALL REINSTALLMODE=A"
+      tags: velociraptorclient
+      
+      
+    # Install Config File. Standard MSI enforces config location: C:\Program Files\Velociraptor\Velociraptor.config.yaml
+    - name: Copy Pre-Generated Velociraptor Client config
+      template:
+        src: ../templates/clientconfig.yml.j2
+        dest: C:\Program Files\Velociraptor\Velociraptor.config.yaml
+      tags: velociraptorclient
+
+    # Start the service
+    - name: Restart a service
+      win_service:
+        name: Velociraptor
+        state: started
+        start_mode: auto
+      tags: velociraptorclient
+
+  rescue:
+    - include_tasks: 
+        file: roles/velociraptorclient/tasks/main.yaml
+        apply:
+          tags:
+            - velociraptorclient          
+      when: include_velociraptorclient_install_counter|int < include_max|default(10)|int
+      tags: velociraptorclient
+      
+    - fail:
+        msg: Failed to install velociraptor client after 10 retrials
+      when: include_velociraptorclient_install_counter|int >= include_max|default(10)|int
+      tags: velociraptorclient
+  tags: velociraptorclient

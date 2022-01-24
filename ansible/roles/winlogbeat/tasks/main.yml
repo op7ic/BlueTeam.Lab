@@ -1,0 +1,81 @@
+############################################################
+# Install WinLogBeat Agent. Tag: winlogbeat
+############################################################
+---
+- name: Attempt to configure winlogbeat agent. Fail and repeat if needed.
+  block:
+    - name: set fact 
+      set_fact:
+        include_winlogbeat_install_counter: "{{ 0 if include_winlogbeat_install_counter is undefined else include_winlogbeat_install_counter|default(0)|int + 1 }}"
+      tags: winlogbeat
+      
+    - name: Domain configuration file
+      include_vars:
+        file: ../../../domain_setup.yml
+        name: config_file
+      tags: winlogbeat
+
+    - name: Read Config File and get path to installers
+      set_fact:
+        winlogbeat_agent_url: "{{ config_file.winlogbeat.winlog_beat_url }}"
+        ansible_user: "{{ config_file.local_admin_credentials.username }}"
+        ansible_password: "{{ config_file.local_admin_credentials.password }}"
+      tags: winlogbeat
+
+    # Test if binary is there
+    - name: Test if WinLogBeat-agent executable is present
+      win_stat:
+        path: "{{ winlogbat_installer_path }}"
+      register: winlogbeat_executable
+      tags: winlogbeat 
+      
+    # Download WinLogBeat-Agent
+    - name: Download WinLogBeat from main repo
+      win_get_url:
+        url: "{{ winlogbeat_agent_url }}"
+        dest: "{{ winlogbat_installer_path }}"
+      when: not winlogbeat_executable.stat.exists
+      tags: winlogbeat 
+
+    # Install WinLogBeat-Agent
+    - name: Install WinLogBeat
+      win_command: "msiexec.exe /i {{ winlogbat_installer_path }} /q"
+      when: not winlogbeat_executable.stat.exists
+      tags: winlogbeat 
+
+    # Get IP of server to forward events to (Wazuh)  
+    - name: Get Wazuh IP and elastic credentials
+      set_fact:
+        wazuh_server_ip: "{{ wazuh_server_ip }}"
+        winlogbeat_elastic_user: "{{ config_file.winlogbeat.elastic_user }}"
+        winlogbeat_elastic_password: "{{ config_file.winlogbeat.elastic_password }}"
+      tags: winlogbeat 
+      
+    # Copy over WinLogBeat config
+    - name: Copy over WinLogBeat config file
+      win_template:
+        src: ./templates/config.yml.j2
+        dest: C:\ProgramData\Elastic\Beats\winlogbeat\winlogbeat.yml
+      tags: winlogbeat 
+
+    # Make sure WinLogBeat service is started
+    - name: Ensure Winlogbeat service exists and is started
+      win_service:
+        name: winlogbeat
+        state: restarted
+        start_mode: auto
+      tags: winlogbeat
+  
+  rescue:
+    - include_tasks: 
+        file: roles/winlogbeat/tasks/main.yml
+        apply:
+          tags:
+            - winlogbeat
+      when: include_winlogbeat_install_counter|int < include_max|default(10)|int
+      tags: winlogbeat
+    - fail:
+        msg: Failed to install WinLogBeat Agent after 10 attempts.
+      when: include_winlogbeat_install_counter|int >= include_max|default(10)|int
+      tags: winlogbeat
+  tags: winlogbeat

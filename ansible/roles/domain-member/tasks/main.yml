@@ -1,0 +1,203 @@
+---
+############################################################
+# Base actions. Tag: base
+############################################################
+- name: Attempt to install base window client. Fail and repeat if needed.
+  block:
+    - name: set fact
+      set_fact:
+        include_windows_member_install_counter: "{{ 0 if include_windows_member_install_counter is undefined else include_windows_member_install_counter|default(0)|int + 1 }}"
+        priv_dc_ip: "{{ dc_internal_ip }}"
+      tags: base
+      
+    - name: Domain configuration file
+      include_vars:
+        file: ../../../domain_setup.yml
+        name: config_file
+      tags: base
+      
+    - name: Read Config File and get credentials and set facts
+      set_fact:
+        ansible_user: "{{ config_file.local_admin_credentials.username }}"
+        ansible_password: "{{ config_file.local_admin_credentials.password }}"
+        priv_dc_ip: "{{ '10.0.10.10' if dc_internal_ip is undefined else dc_internal_ip|default('10.0.10.10')}}"
+      tags: base
+      
+    - name: Print internal DC address
+      debug:
+        msg: "Internal DC address (from Terraform): {{ dc_internal_ip }}, build try: {{ include_windows_member_install_counter }}"
+      tags: base
+
+    # Needs to be performed after the set_fact block which sets up the remote user and password to use
+    - name: Gather remote facts
+      setup: {}
+      tags: base
+
+    # We already have WinRM at this point but invoking ConfigureRemotingForAnsible just in case. All this will do is to setup FW rules and create SSL cert. 
+    - name: Download ConfigureRemotingForAnsible
+      win_get_url:
+        url: "https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"
+        dest: C:\windows\temp\ConfigureRemotingForAnsible.ps1
+      tags: base 
+    
+    - name: Run ConfigureRemotingForAnsible
+      win_command: cmd.exe /c powershell.exe -nop -ExecutionPolicy ByPass -File C:\windows\temp\ConfigureRemotingForAnsible.ps1
+      tags: base 
+      
+    # As we might have old windows OS boxes, we use different syntax for winrm settings. Some will error out.
+    # These limits should never be hit of course.     
+    - name: set winrm timeouts 1
+      win_command: cmd.exe /c winrm set winrm/config @{MaxTimeoutms="350000"}
+      ignore_errors: yes
+      tags: base
+    - name: set winrm timeouts 2
+      win_command: cmd.exe /c winrm set winrm/config/service @{MaxConcurrentOperationsPerUser="500"}
+      ignore_errors: yes
+      tags: base
+    - name: set winrm timeouts 3
+      win_command: cmd.exe /c winrm set winrm/config/Service @{MaxConcurrentOperations="500"}
+      ignore_errors: yes
+      tags: base
+    - name: set winrm timeouts 4
+      win_command: cmd.exe /c winrm set winrm/config/service @{AllowUnencrypted="true"}
+      ignore_errors: yes  
+      tags: base
+    - name: set winrm timeouts 5
+      win_command: cmd.exe /c winrm set winrm/config/winrs @{MaxShellsPerUser="400"}
+      ignore_errors: yes 
+      tags: base      
+    - name: set winrm timeouts 6
+      win_command: cmd.exe /c winrm set winrm/config/winrs @{MaxConcurrentUsers="300"}
+      ignore_errors: yes   
+      tags: base      
+    - name: set winrm timeouts 7
+      win_command: cmd.exe /c winrm set winrm/config/winrs @{MaxMemoryPerShellMB="512"}
+      ignore_errors: yes 
+      tags: base      
+      
+    - name: Set domain controllers as DNS servers
+      win_dns_client:
+        adapter_names: '*'
+        ipv4_addresses: "{{ priv_dc_ip }}"
+      tags: base
+
+    # Strangly this sometimes errors but hosts joins the domain anyway. We will repeat the process later on just in case.  
+    - name: Ensure workstation is domain-joined
+      ignore_errors: yes
+      win_domain_membership:
+        dns_domain_name: "{{ config_file.domain_fqdn }}"
+        hostname: "{{ ansible_env.COMPUTERNAME }}"
+        domain_admin_user: "{{ config_file.local_admin_credentials.username }}@{{ config_file.domain_fqdn }}"
+        domain_admin_password: "{{ config_file.local_admin_credentials.password }}"
+        state: domain
+      register: domain_state
+      retries: 4
+      delay: 1
+      tags: base
+
+    # Sleep for 5 minutes. This is to give time for workstation to set itself properly.
+    # In my experiments, WinRM was timing out a lot with 'connection refused' error here otherwise.
+    - name: Sleep
+      pause:
+        minutes: 5
+      tags: base  
+ 
+    # We add extra time here to wait for reboot in case of slower workstations. Our users can choose any rig they want, including 1GB RAM after all.
+    - name: Reboot machine if it has just joined the domain
+      win_reboot:
+        reboot_timeout: 3600
+        post_reboot_delay: 180
+      when: domain_state.reboot_required
+      tags: base
+  
+    # Repeat domain joining process in case previous failed. This is done as a precaution and, in a lot of cases, we get error about the fact that system is already joined. 
+    - name: Ensure workstation is domain-joined
+      ignore_errors: yes
+      win_domain_membership:
+        dns_domain_name: "{{ config_file.domain_fqdn }}"
+        hostname: "{{ ansible_env.COMPUTERNAME }}"
+        domain_admin_user: "{{ config_file.local_admin_credentials.username }}@{{ config_file.domain_fqdn }}"
+        domain_admin_password: "{{ config_file.local_admin_credentials.password }}"
+        state: domain
+      register: domain_state_repeat
+      retries: 4
+      delay: 1
+      tags: base  
+      
+    # Another reboot after joining domain. This is really just done to ensure boxes really did join the domain.
+    # It might be not needed but the amount of timeout and errors we got when creating systems is just staggering.
+    - name: Reboot machine if it has just joined the domain
+      win_reboot:
+        reboot_timeout: 3600
+        post_reboot_delay: 180
+      when: domain_state_repeat.reboot_required
+      tags: base
+  
+    - name: Ensure domain users can RDP on any workstation
+      win_group_membership:
+        name: Remote Desktop Users
+        members: "{{ config_file.domain_user_credentials | map(attribute='username') | list }}"
+        state: present
+      # Keep trying until we get all users done
+      retries: 4
+      delay: 1
+      ignore_errors: yes # We do this just in case of re-run for workstation build process
+      register: rdp_users_state
+      tags: base
+          
+    - name: Read local admins from domain configuration file
+      set_fact:
+        local_admins: "{{ config_file.workstation_configuration | selectattr('name', 'equalto', ansible_env.COMPUTERNAME) | map(attribute='local_admins') | reject('undefined') | select() | list }}"
+      tags: base
+
+    - name: Ensure local administrator users are created
+      win_group_membership:
+        name: Administrators
+        members: "{{ item }}"
+        state: present
+      with_items: "{{ local_admins }}"
+      when: local_admins|length > 0
+      retries: 5
+      delay: 1
+      ignore_errors: yes # We do this just in case of re-run for workstation build process
+      tags: base
+      
+    - name: Disable Windows Firewall
+      win_firewall:
+        state: disabled
+        profiles:
+        - Domain
+        - Private
+        - Public
+      tags: base
+        
+    # https://docs.microsoft.com/en-us/windows/client-management/mdm/policy-csp-privacy#privacy-disableprivacyexperience
+    - name: Disable 'Choose your privacy settings' screen at first logon
+      win_regedit:
+        path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\OOBE
+        name: DisablePrivacyExperience
+        data: "1"
+        type: dword
+      ignore_errors: yes # For some reason this errors sometimes. Execute but ignore errors. This is not crucial ..
+      tags: base
+      
+    # Sleep for 1 minute, after this task we call restart. This is just a precaution so everything on the box can settle down before going down.
+    - name: Sleep
+      pause:
+        minutes: 1
+      tags: base 
+      
+  rescue:
+    - include_tasks: 
+        file: roles/domain-member/tasks/main.yml
+        apply:
+          tags:
+            - base
+      when: include_windows_member_install_counter|int < include_max|default(10)|int
+      tags: base
+      
+    - fail:
+        msg: Failed to install domain member base after 10 attempts. Moving on.
+      when: include_windows_member_install_counter|int >= include_max|default(10)|int
+      tags: base        
+  tags: base

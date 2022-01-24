@@ -1,0 +1,160 @@
+############################################################
+# Install OSQuery Agent. Tag: osqueryagent
+############################################################
+---
+- name: Attempt to deploy OSQuery agent. Fail and repeat if needed.
+  block:
+    - name: set fact
+      set_fact:
+        include_osquery_install_counter: "{{ 0 if include_osquery_install_counter is undefined else include_osquery_install_counter|default(0)|int + 1 }}"
+      tags: osqueryagent
+        
+    - name: Domain configuration file
+      include_vars:
+        file: ../../../domain_setup.yml
+        name: config_file
+      tags: osqueryagent
+      
+    - name: Read Config File and get path to installers
+      set_fact:
+        osquery_win_agent_url: "{{ config_file.osquery_download.windows_url }}"
+        osquery_debian_agent_url: "{{ config_file.osquery_download.debian_url }}"
+        webserver_port: "{{ config_file.Fleetdm.webserver.port }}"
+        enroll_secret: "{{ config_file.Fleetdm.enroll_secret }}"
+        ansible_user: "{{ config_file.local_admin_credentials.username }}"
+        ansible_password: "{{ config_file.local_admin_credentials.password }}"
+      tags: osqueryagent
+
+  
+    # Test if binary is there
+    - name: Test whether OSQuery-agent executable is present
+      win_stat:
+        path: "{{ osquery_agent_path }}"
+      register: osquery_executable
+      tags: osqueryagent
+      
+    # Download OSQuery-Agent
+    - name: Download OSQuery from main repo
+      win_get_url:
+        url: "{{ osquery_win_agent_url }}"
+        dest: "{{ osquery_agent_path }}"
+      when: not osquery_executable.stat.exists
+      tags: osqueryagent
+      
+    # Install OSQuery-Agent
+    - name: Install OSQuery
+      win_command: "msiexec.exe /i {{ osquery_agent_path }} /q"
+    #  when: not osquery_executable.stat.exists
+      tags: osqueryagent
+
+    # - name: Download OSQuery Packs and config
+      # win_get_url:
+        # url: "https://raw.githubusercontent.com/osquery/osquery/master/packs/windows-attacks.conf"
+        # dest: C:\Program Files\osquery\packs\
+      # tags: osqueryagent  
+    # - name: Download OSQuery Packs and config
+      # win_get_url:
+        # url: "https://raw.githubusercontent.com/palantir/osquery-configuration/master/Classic/Endpoints/packs/performance-metrics.conf"
+        # dest: C:\Program Files\osquery\packs\
+      # tags: osqueryagent  
+    # - name: Download OSQuery Packs and config
+      # win_get_url:
+        # url: "https://raw.githubusercontent.com/palantir/osquery-configuration/master/Classic/Endpoints/packs/security-tooling-checks.conf"
+        # dest: C:\Program Files\osquery\packs\
+      # tags: osqueryagent  
+    # - name: Download OSQuery Packs and config
+      # win_get_url:
+        # url: "https://raw.githubusercontent.com/palantir/osquery-configuration/master/Classic/Endpoints/packs/windows-application-security.conf"
+        # dest: C:\Program Files\osquery\packs\
+      # tags: osqueryagent  
+    # - name: Download OSQuery Packs and config
+      # win_get_url:
+        # url: "https://raw.githubusercontent.com/palantir/osquery-configuration/master/Classic/Endpoints/packs/windows-compliance.conf"
+        # dest: C:\Program Files\osquery\packs\
+      # tags: osqueryagent  
+    # - name: Download OSQuery Packs and config
+      # win_get_url:
+        # url: "https://raw.githubusercontent.com/palantir/osquery-configuration/master/Classic/Endpoints/packs/windows-registry-monitoring.conf"
+        # dest: C:\Program Files\osquery\packs\
+      # tags: osqueryagent  
+    # - name: Download OSQuery Packs and config
+      # win_get_url:
+        # url: "https://raw.githubusercontent.com/osquery/osquery/master/packs/unwanted-chrome-extensions.conf"
+        # dest: C:\Program Files\osquery\packs\
+      # tags: osqueryagent  
+
+    - name: Copy OSQuery config
+      copy:
+        src: ../templates/osquery.conf
+        dest: C:\Program Files\osquery\osquery.conf
+      tags: osqueryagent 
+
+    - name: Copy OSQuery key
+      template:
+        src: ../templates/osquery.key.j2
+        dest: C:\Program Files\osquery\osquerykey.txt
+      tags: osqueryagent 
+      
+    - name: Copy OSQuery flags
+      template:
+        src: ../templates/osquery.flags.j2
+        dest: C:\Program Files\osquery\osquery.flags
+      tags: osqueryagent 
+      
+    - name: set secret - user
+      win_command: cmd /c "setx OSQUERY_ENROLL_SECRET {{enroll_secret}}"
+      tags: osqueryagent
+
+    # openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /opt/fleetdm/ssl.key -out /opt/fleetdm/ssl.crt -subj /CN=10.0.10.100 -batch
+    # You need to have CN with IP of the server !
+
+    - name: Copy Fleetdm SSL Cert
+      copy:
+        src: ../templates/ssl.crt
+        dest: C:\Program Files\osquery\ssl.crt
+      tags: osqueryagent
+      
+    # Sleep for 1 minutes before command is executed
+    - name: Sleep
+      pause:
+        minutes: 1
+      tags: osqueryagent  
+      
+    - name: set secret - system
+      win_command: cmd /c "setx OSQUERY_ENROLL_SECRET {{enroll_secret}} /M"
+      tags: osqueryagent
+     
+    # Start the service
+    - name: Restart a service
+      win_service:
+        name: osqueryd
+        state: started
+        start_mode: auto
+      tags: osqueryagent
+      
+    - name: set secret - repeat for system just in case
+      win_command: cmd /c "setx OSQUERY_ENROLL_SECRET {{enroll_secret}} /M"
+      tags: osqueryagent
+      
+    # Start the service
+    - name: Restart a service
+      win_service:
+        name: osqueryd
+        state: started
+        start_mode: auto
+      tags: osqueryagent
+
+  rescue:
+    - include_tasks: 
+        file: roles/osqueryagent/tasks/main.yml
+        apply:
+          tags:
+            - osqueryagent
+      when: include_osquery_install_counter|int < include_max|default(10)|int
+      tags: osqueryagent
+      
+    - fail:
+        msg: Failed to install osquery agent after 10 retrials. Moving on ...
+      when: include_osquery_install_counter|int >= include_max|default(10)|int
+      tags: osqueryagent      
+  tags: osqueryagent

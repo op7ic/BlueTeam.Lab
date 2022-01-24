@@ -1,0 +1,18 @@
+[Unit]
+Description=Fleetm
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ fleetdm_install_path }}/fleetbin serve --config {{ fleetdm_install_path }}/config/fleetdm.yml
+WorkingDirectory={{ fleetdm_install_path }}
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+SyslogIdentifier=fleetm
+User=fleetdm
+Group=nogroup
+PrivateTmp=false
+
+[Install]
+WantedBy=multi-user.target

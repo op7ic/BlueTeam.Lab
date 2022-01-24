@@ -1,0 +1,378 @@
+---
+############################################################
+# Install Fleet Server. Tag: fleetserver
+############################################################
+- name: Attempt to install Fleet Server. Repeat if needed.
+  block:
+    - name: set fact 
+      set_fact:
+        include_fleetdm_install_counter: "{{ 0 if include_fleetdm_install_counter is undefined else include_fleetdm_install_counter|default(0)|int + 1 }}"
+      tags: fleetserver
+      
+    - name: Domain configuration file
+      include_vars:
+        file: ../../../domain_setup.yml
+        name: config_file
+      tags: fleetserver
+      
+    - name: Read Config File and get credentials
+      set_fact:
+        fleet_ctl_download_url: "{{ config_file.Fleetdm.fleet_ctl_download_url }}"
+        ansible_user: "{{ config_file.wazuh_admin.username }}"
+        ansible_password: "{{ config_file.wazuh_admin.password }}"
+        enroll_secret: "{{ config_file.Fleetdm.enroll_secret }}"
+        server_download: "{{ config_file.Fleetdm.server_download_url }}"
+        mysql_address: "{{ config_file.Fleetdm.mysql.address }}"
+        mysql_database: "{{ config_file.Fleetdm.mysql.database }}"
+        mysql_username: "{{ config_file.Fleetdm.mysql.username }}"
+        mysql_password: "{{ config_file.Fleetdm.mysql.password }}"
+        webserver_port: "{{ config_file.Fleetdm.webserver.port }}"
+        webserver_listener_ip:  "{{ config_file.Fleetdm.webserver.listener_address }}"
+        webserver_tls: "{{ config_file.Fleetdm.webserver.tls }}"
+        osquery_results: "{{ config_file.Fleetdm.osquery.result_log_file }}"
+        osquery_status: "{{ config_file.Fleetdm.osquery.status_log_file }}"
+        logging_type: "{{ config_file.Fleetdm.logging.json }}"
+        fleetdm_install_path: "{{ config_file.Fleetdm.server_install_folder }}"
+        redis_address: "{{ config_file.Fleetdm.redis_address }}"
+      tags: fleetserver
+      
+    # Needs to be performed after the set_fact block which sets up the remote user and password to use
+    - name: Gather remote facts
+      setup: {}
+      tags: fleetserver
+  
+    - name: Install software
+      package:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - apt-transport-https
+        - htop
+        - tcpdump
+        - net-tools
+        - unzip
+        - gnupg
+      tags: fleetserver
+
+    - name: Create fleetdm user
+      user:
+        name: fleetdm
+        shell: /usr/sbin/nologin
+      tags: fleetserver
+
+    - name: Create fleetdm directory
+      file:
+        path: "{{ fleetdm_install_path }}"
+        state: directory
+        owner: fleetdm
+        group: root
+      tags: fleetserver
+
+    - name: Create fleetdm conf directory
+      file:
+        path: "{{ fleetdm_install_path }}/config"
+        state: directory
+        owner: fleetdm
+        group: root
+      tags: fleetserver
+      
+    - name: Create fleetdm packs directory
+      file:
+        path: "{{ fleetdm_install_path }}/packs"
+        state: directory
+        owner: fleetdm
+        group: root
+      tags: fleetserver      
+
+    - name: Download OSQuery Packs and config
+      get_url:
+        url: "https://raw.githubusercontent.com/palantir/osquery-configuration/master/Fleet/Endpoints/packs/security-tooling-checks.yaml"
+        dest: "{{ fleetdm_install_path }}/packs/"
+      tags: fleetserver  
+    - name: Download OSQuery Packs and config
+      get_url:
+        url: "https://raw.githubusercontent.com/palantir/osquery-configuration/master/Fleet/Endpoints/packs/performance-metrics.yaml"
+        dest: "{{ fleetdm_install_path }}/packs/"
+      tags: fleetserver  
+    - name: Download OSQuery Packs and config
+      get_url:
+        url: "https://raw.githubusercontent.com/palantir/osquery-configuration/master/Fleet/Endpoints/packs/windows-application-security.yaml"
+        dest: "{{ fleetdm_install_path }}/packs/"
+      tags: fleetserver  
+    - name: Download OSQuery Packs and config
+      get_url:
+        url: "https://raw.githubusercontent.com/palantir/osquery-configuration/master/Fleet/Endpoints/packs/windows-compliance.yaml"
+        dest: "{{ fleetdm_install_path }}/packs/"
+      tags: fleetserver  
+    - name: Download OSQuery Packs and config
+      get_url:
+        url: "https://raw.githubusercontent.com/palantir/osquery-configuration/master/Fleet/Endpoints/packs/windows-registry-monitoring.yaml"
+        dest: "{{ fleetdm_install_path }}/packs/"
+      tags: fleetserver  
+      
+    - name: Download Fleetdm
+      get_url:
+        url: "{{ server_download }}"
+        dest: /tmp/fleetdm.tar.gz
+      tags: fleetserver      
+      
+    - name: Create temporary unzip directory
+      file:
+        path: /tmp/fleetdm
+        state: directory
+      tags: fleetserver
+
+    - name: Unpack Fleetdm
+      unarchive:
+        src: /tmp/fleetdm.tar.gz
+        dest: /tmp/fleetdm
+        remote_src: true
+        extra_opts: [--strip-components=1]
+      tags: fleetserver
+
+    - name: Copy Fleetdm Fleet binary to "{{ fleetdm_install_path }}/fleet"
+      copy:
+        src: /tmp/fleetdm/fleet
+        dest: "{{ fleetdm_install_path }}/fleetbin"
+        remote_src: true
+        owner: fleetdm
+        group: root
+        mode: 0755
+      tags: fleetserver
+      
+    - name: Download FleetCTL
+      get_url:
+        url: " {{ fleet_ctl_download_url }}"
+        dest: /tmp/fleetctl.tar.gz
+      tags: fleetserver      
+
+    - name: Create temporary unzip directory
+      file:
+        path: /tmp/fleetctl
+        state: directory
+      tags: fleetserver
+
+    - name: Unpack FleetCTL
+      unarchive:
+        src: /tmp/fleetctl.tar.gz
+        dest: /tmp/fleetctl
+        remote_src: true
+        extra_opts: [--strip-components=1]
+      tags: fleetserver
+      
+    - name: Copy FleetCTL binary to "{{ fleetdm_install_path }}/fleet"
+      copy:
+        src: /tmp/fleetctl/fleetctl
+        dest: "{{ fleetdm_install_path }}/fleetctl"
+        remote_src: true
+        owner: fleetdm
+        group: root
+        mode: 0755
+      tags: fleetserver
+
+
+# Basic installation done
+############################################################
+# Install Redis. Tag: fleetserver
+############################################################
+
+    - name: Set up Redis 6 repo
+      shell: |
+        curl https://packages.redis.io/gpg | sudo apt-key add -
+        echo "deb https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+      tags: fleetserver
+      
+    - name: Install redis
+      apt:
+        name: redis-server
+        update_cache: yes
+      tags: fleetserver
+      
+    - name: Start redis service
+      service:
+        name: redis-server.service
+        state: restarted
+        enabled: yes
+      tags: fleetserver
+      
+############################################################
+# Configure Fleet Database. Tag: fleetserver
+############################################################
+
+    - name: Install MySQL
+      apt:
+        name: ['mysql-server', 'python3-mysqldb', 'python3-pip']
+        state: present
+        update_cache: yes
+      tags: fleetserver
+
+    - name: Start MySQL service
+      service:
+        name: mysql.service
+        state: restarted
+        enabled: yes
+      tags: fleetserver
+      
+    - name: Set root password
+      community.mysql.mysql_user: 
+        login_user: 'root'
+        login_password: "{{ mysql_password }}"
+        name: 'root'
+        password: '{{ mysql_password }}'
+        priv: '*.*:ALL,GRANT'
+        host_all: yes
+      tags: fleetserver
+      
+    - name: Create FleetDM database
+      community.mysql.mysql_db:
+        login_user: "root"
+        login_password: "{{ mysql_password }}"
+        name: "{{ mysql_database }}"
+        state: present
+      tags: fleetserver
+      
+    - name: Create FleetDM database user
+      mysql_user:
+        name: '{{ mysql_username }}'
+        password: '{{ mysql_password }}'
+        priv: '{{ mysql_database }}.*:ALL'
+        state: present
+        login_user: 'root'
+        login_password: '{{ mysql_password }}'
+        host: localhost
+      tags: fleetserver
+      
+    - name: Start MySQL service
+      service:
+        name: mysql.service
+        state: restarted
+        enabled: yes
+      tags: fleetserver
+       
+    - name: Copy fleetdm conf
+      template:
+        src: ../templates/config.yml.j2
+        dest: "{{ fleetdm_install_path }}/config/fleetdm.yml"
+        owner: root
+        group: root
+      tags: fleetserver
+
+    - name: Install MySQL database for Fleetdm
+      community.mysql.mysql_db:
+        login_user: "{{ mysql_username }}"
+        login_password: "{{ mysql_password }}"
+        name: "{{ mysql_database }}"
+        state: present
+      tags: fleetserver
+
+    - name: Intialize Fleetdm database installation
+      shell: "{{ fleetdm_install_path }}/fleetbin prepare db --config {{ fleetdm_install_path }}/config/fleetdm.yml"
+      tags: fleetserver
+      
+    - name: Copy Fleetdm Systemd setup
+      template:
+        src: "../templates/systemd-fleetm.service.j2"
+        dest: "/lib/systemd/system/fleetdm.service"
+        owner: root
+        group: root
+        mode: '0644'
+      register: systemd
+      tags: fleetserver
+      
+    - name: Copy FleetCTL setup
+      template:
+        src: "../templates/fleet-config.yml.j2"
+        dest: "{{ fleetdm_install_path }}/config/fleetctl-config.yml"
+        owner: fleetdm
+        group: root
+      tags: fleetserver
+     
+    # openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /opt/fleetdm/ssl.key -out /opt/fleetdm/ssl.crt -subj /CN=10.0.10.100 -batch
+    # You need to have CN with IP of the server !
+
+    - name: Copy Fleetdm SSL Key
+      copy:
+        src: "../templates/ssl.key"
+        dest: "{{ fleetdm_install_path }}/ssl.key"
+        owner: root
+        group: root
+        mode: '0644'
+      tags: fleetserver
+      
+    - name: Copy Fleetdm SSL Cert
+      copy:
+        src: "../templates/ssl.crt"
+        dest: "{{ fleetdm_install_path }}/ssl.crt"
+        owner: root
+        group: root
+        mode: '0644'
+      tags: fleetserver
+      
+    - name: chown files for logs
+      file:
+        path: "{{ osquery_results }}"
+        state: touch
+        owner: fleetdm
+        group: fleetdm
+        mode: '0644'
+      tags: fleetserver
+        
+      file:
+        path: "{{ osquery_status }}"
+        state: touch
+        owner: fleetdm
+        group: fleetdm
+        mode: '0644'
+      tags: fleetserver
+
+    # Enable service
+    - name: Enable Fleetm service
+      service:
+        name: fleetdm
+        enabled: yes
+        state: 'started'
+      tags: fleetserver    
+  
+
+    - name: Create connection point via FleetCTL
+      shell: "{{ fleetdm_install_path }}/fleetctl config set --address https://localhost:{{webserver_port}} --tls-skip-verify"
+      tags: fleetserver
+    
+    - name: Add Fleet User
+      # add user
+      shell: "{{ fleetdm_install_path }}/fleetctl setup --email '{{ config_file.Fleetdm.username }}' --name '{{ config_file.Fleetdm.account_name }}' --org-name '{{ config_file.Fleetdm.org }}' --password '{{config_file.Fleetdm.password }}' "
+      tags: fleetserver
+      
+    - name: Login and Add Fleet config
+      # Login for session
+      shell: "{{ fleetdm_install_path }}/fleetctl login --email '{{ config_file.Fleetdm.username }}' --password '{{config_file.Fleetdm.password }}' "
+      tags: fleetserver      
+
+    - name: Apply additional config via FleetCTL
+      # Login for session
+      shell: "{{ fleetdm_install_path }}/fleetctl apply -f {{ fleetdm_install_path }}/config/fleetctl-config.yml"
+      tags: fleetserver    
+
+    # Enable service
+    - name: Enable Fleetm service
+      service:
+        name: fleetdm
+        enabled: yes
+        state: 'started'
+      tags: fleetserver    
+  
+
+  rescue:
+    - include_tasks: 
+        file: roles/fleetserver/tasks/main.yml
+        apply:
+          tags:
+            - fleetserver
+      when: include_fleetdm_install_counter|int < include_max|default(10)|int
+      tags: fleetserver
+      
+    - fail:
+        msg: Failed to install fleetserver after 10 attempts
+      when: include_fleetdm_install_counter|int >= include_max|default(10)|int
+      tags: fleetserver     
+  tags: fleetserver

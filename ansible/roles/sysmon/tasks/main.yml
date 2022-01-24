@@ -1,0 +1,77 @@
+############################################################
+# Install Sysmon. Tag: sysmon
+############################################################
+--- 
+- name: Attempt to deploy Sysmon agent. Fail and repeat if needed.
+  block:
+    - name: set fact
+      set_fact:
+        include_sysmon_installer_counter: "{{ 0 if include_sysmon_installer_counter is undefined else include_sysmon_installer_counter|default(0)|int + 1 }}"
+      tags: sysmon
+  
+    - name: Domain configuration file
+      include_vars:
+        file: ../../../domain_setup.yml
+        name: config_file
+      tags: sysmon
+      
+    - name: Read Config File and get Sysmon config options
+      set_fact:
+        install_url: "{{ config_file.sysmon.installer_url }}"
+        config_url: "{{ config_file.sysmon.config_url }}"
+        ansible_user: "{{ config_file.local_admin_credentials.username }}"
+        ansible_password: "{{ config_file.local_admin_credentials.password }}"
+      tags: sysmon
+
+    # Needs to be performed after the set_fact block which sets up the remote user and password to use
+    - name: Gather remote facts
+      setup: {}
+      tags: sysmon 
+     
+    # Test if binary is there
+    - name: Test for Sysmon executable
+      win_stat:
+        path: "{{ executable_path }}"
+      register: sysmon_executable
+      tags: sysmon
+
+    # Download Sysmon
+    - name: Download Sysmon from Sysinternals portal
+      win_get_url:
+        url: "{{ install_url }}"
+        dest: "{{ executable_path }}"
+      when: not sysmon_executable.stat.exists
+      tags: sysmon
+      
+    # Download latest Sysmon config
+    - name: Downloading Sysmon config file
+      win_get_url:
+        url: "{{ config_url }}"
+        dest: "{{ config_file_path }}"
+      register: sysmon_conf
+      tags: sysmon
+
+    - name: Install Sysmon
+      win_command: "{{ executable_path }} -i {{ config_file_path }} -accepteula"
+      when: not sysmon_executable.stat.exists
+      tags: sysmon
+
+    - name: Update Sysmon configuation
+      win_command: "{{ executable_path }} -c {{ config_file_path }}"
+      when: sysmon_executable.stat.exists and sysmon_conf.changed
+      tags: sysmon
+  
+  rescue:
+    - include_tasks: 
+        file: roles/sysmon/tasks/main.yml
+        apply:
+          tags:
+            - sysmon
+      when: include_sysmon_installer_counter|int < include_max|default(10)|int
+      tags: sysmon
+      
+    - fail:
+        msg: Failed to install Sysmon agent after 10 attempts
+      when: include_sysmon_installer_counter|int >= include_max|default(10)|int
+      tags: sysmon
+  tags: sysmon

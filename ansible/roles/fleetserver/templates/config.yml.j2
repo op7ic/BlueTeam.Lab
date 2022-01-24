@@ -1,0 +1,20 @@
+mysql:
+  address: {{ mysql_address }}
+  database: {{ mysql_database }}
+  username: {{ mysql_username }}
+  password: {{ mysql_password }}
+redis:
+  address: {{ redis_address }}
+server:
+  address: {{ webserver_listener_ip }}:{{ webserver_port }}
+  tls: {{ webserver_tls }}
+  cert: /opt/fleetdm/ssl.crt
+  key: /opt/fleetdm/ssl.key
+filesystem:
+  status_log_file: {{ osquery_results }}
+  result_log_file: {{ osquery_status }}
+  enable_log_rotation: true
+logging:
+  json: {{ logging_type }}
+osquery:
+    host_identifier: hostname

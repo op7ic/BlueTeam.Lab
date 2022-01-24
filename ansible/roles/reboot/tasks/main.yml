@@ -1,0 +1,21 @@
+---
+############################################################
+# Reboot the system. Tag: reboot
+############################################################
+- name: Domain configuration file
+  include_vars:
+    file: ../../../domain_setup.yml
+    name: config_file
+  tags: reboot
+  
+- name: Read Config File and get credentials and set facts
+  set_fact:
+    ansible_user: "{{ config_file.local_admin_credentials.username }}"
+    ansible_password: "{{ config_file.local_admin_credentials.password }}"
+  tags: reboot
+  
+- name: Reboot machine
+  win_reboot:
+    reboot_timeout: 3600
+    post_reboot_delay: 180
+  tags: reboot

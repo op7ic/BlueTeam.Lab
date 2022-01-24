@@ -1,0 +1,2 @@
+winlogbat_installer_path: C:\Windows\Temp\winlogbeat.msi
+winlogbat_config_file_path: C:\Windows\Temp\winlogbeat_config.yml

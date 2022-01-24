@@ -1,0 +1,49 @@
+############################################################
+# Patch the system. Tag: patch
+############################################################
+- name: Attempt to install patches window client. Fail and repeat if needed.
+  block:
+    - name: set fact
+      set_fact:
+        patch_install_count: "{{ 0 if patch_install_count is undefined else patch_install_count|default(0)|int + 1 }}"
+      tags: patch  
+
+    - name: Domain configuration file
+      include_vars:
+        file: ../../../domain_setup.yml
+        name: config_file
+      tags: patch
+      
+    - name: Read Config File and get credentials and set facts
+      set_fact:
+        ansible_user: "{{ config_file.local_admin_credentials.username }}"
+        ansible_password: "{{ config_file.local_admin_credentials.password }}"
+      tags: patch
+      
+    - name: Install all updates and reboot as many times as needed
+      win_updates:
+        category_names: '*'
+        reboot: yes
+        reboot_timeout: 3600
+      tags: patch
+
+    # Sleep for 2 minutes
+    - name: Sleep
+      pause:
+        minutes: 2
+      tags: patch  
+            
+  rescue:
+    - include_tasks: 
+        file: roles/patch/tasks/main.yml
+        apply:
+          tags:
+            - patch        
+      when: patch_install_count|int < include_max|default(10)|int
+      tags: patch
+      
+    - fail:
+        msg: Failed to patch domain member after 10 attempts
+      when: patch_install_count|int >= include_max|default(10)|int
+      tags: patch
+  tags: patch

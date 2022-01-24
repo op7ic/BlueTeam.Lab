@@ -1,0 +1,99 @@
+############################################################
+# Install Velociraptor Server. Tag: velociraptorserver
+############################################################
+---
+- name: Attempt to configure Velociraptor Server. Repeat when needed.
+  block:
+    - name: set fact
+      set_fact:
+        include_velociraptorserver_install_counter: "{{ 0 if include_velociraptorserver_install_counter is undefined else include_velociraptorserver_install_counter|default(0)|int + 1 }}"
+      tags: velociraptorserver
+   
+    - name: Domain configuration file
+      include_vars:
+        file: ../../../domain_setup.yml
+        name: config_file
+      tags: velociraptorserver
+
+    - name: Read Config File and get credentials
+      set_fact:
+        ansible_user: "{{ config_file.wazuh_admin.username }}"
+        ansible_password: "{{ config_file.wazuh_admin.password }}"
+        velociraptor_debian: "{{ config_file.velociraptor_server.server_download }}"
+        velociraptor_windows_msi: "{{ config_file.velociraptor_server.client_download }}"
+        wazuh_server_ip: "{{ wazuh_server_ip }}"
+      tags: velociraptorserver
+
+    - name: Gather remote facts
+      setup: {}
+      tags: velociraptorserver
+
+    # Download Velociraptor App
+    - name: Download Velociraptor from main repo
+      get_url:
+        url: "{{ velociraptor_debian }}"
+        dest: "{{ velociraptor_debian_installer_path }}"
+        mode: '0750'
+      tags: velociraptorserver
+
+    # Copy pre-generated configuration file
+    - name: Copy Pre-Generated Velociraptor Server config
+      template:
+        src: ../templates/serverconfig.yml.j2
+        dest: "{{ velociraptor_debian_installer_config_path }}"
+        owner: root
+        group: root
+        mode: 0644
+      tags: velociraptorserver
+
+    # Setup directories
+    - name: Create a directory for Velociraptor datastore
+      file:
+        path: /opt/velociraptor
+        state: directory
+        mode: '0755'
+      tags: velociraptorserver
+        
+    - name: Create a directory for Velociraptor logs
+      file:
+        path: /opt/velociraptor/logs
+        state: directory
+        mode: '0755'
+      tags: velociraptorserver
+     
+    # Create user for our GUI  
+    - name: Create Password for Server GUI
+      command: "{{ velociraptor_debian_installer_path }} --config {{ velociraptor_debian_installer_config_path }} user add {{ config_file.velociraptor_server.username }} {{ config_file.velociraptor_server.password }} --role administrator"
+      tags: velociraptorserver
+     
+    # Install GUI server as service so it keeps on running
+    - name: Install Velociraptor systemd configuration
+      template:
+        src: ../templates/systemd-velociraptor.service.j2
+        dest: /lib/systemd/system/velociraptor.service
+        mode: '0644'
+      register: systemd
+      tags: velociraptorserver
+
+    # Enable service
+    - name: Enable Velociraptor service
+      service:
+        name: velociraptor
+        enabled: yes
+        state: 'started'
+      tags: velociraptorserver
+      
+  rescue:
+    - include_tasks: 
+        file: roles/velociraptorserver/tasks/main.yaml
+        apply:
+          tags:
+            - velociraptorserver
+      when: include_velociraptorserver_install_counter|int < include_max|default(10)|int
+      tags: velociraptorserver
+      
+    - fail:
+        msg: Failed to install Velociraptor Server after 10 attempts.
+      when: include_velociraptorserver_install_counter|int >= include_max|default(10)|int
+      tags: velociraptorserver      
+  tags: velociraptorserver

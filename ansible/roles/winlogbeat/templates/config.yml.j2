@@ -1,0 +1,24 @@
+winlogbeat.event_logs:
+  - name: Security
+  - name: Microsoft-Windows-Sysmon/Operational
+  - name: Application
+  - name: Microsoft-windows-PowerShell/Operational
+    event_id: 4103, 4104
+  - name: Windows PowerShell
+    event_id: 400,600
+    ignore_older: 30m
+  - name: Microsoft-Windows-WMI-Activity/Operational
+    event_id: 5857,5858,5859,5860,5861
+
+output.elasticsearch:
+  hosts:
+  - https://{{ wazuh_server_ip }}:9200
+  index: "winlogbeat-%{+yyyy.MM.dd}"
+  username: "{{ winlogbeat_elastic_user }}"
+  password: "{{ winlogbeat_elastic_password }}"
+  ssl.verification_mode: none
+  
+setup.template.name: "winlogbeat"
+setup.template.pattern: "winlogbeat-*"
+setup.kibana.ssl.verification_mode: none
+

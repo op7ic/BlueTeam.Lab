@@ -1,0 +1,18 @@
+[Unit]
+Description=Velociraptor
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ velociraptor_debian_installer_path }} --config {{ velociraptor_debian_installer_config_path }} frontend
+WorkingDirectory=/tmp/
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+SyslogIdentifier=velociraptor
+User=root
+Group=nogroup
+PrivateTmp=false
+
+[Install]
+WantedBy=multi-user.target

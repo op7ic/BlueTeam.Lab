@@ -1,0 +1,5 @@
+- name: restart-sysmon
+  win_shell: Restart-Service sysmon
+
+- name: restart-sysmon64
+  win_shell: Restart-Service sysmon64

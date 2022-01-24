@@ -1,0 +1,1571 @@
+---
+apiVersion: v1
+kind: enroll_secret
+spec:
+  secrets:
+    - secret: "{{ enroll_secret }}"
+---
+apiVersion: v1
+kind: config
+spec:
+  host_settings:
+    enable_software_inventory: true
+---
+apiVersion: v1
+kind: pack
+spec:
+  name: windows-pack
+  queries:
+  - description: System info snapshot query
+    interval: 28800
+    name: system_info_snapshot
+    platform: windows
+    query: system_info_snapshot
+    snapshot: true
+  - description: List in-use Windows drivers
+    interval: 3600
+    name: drivers
+    platform: windows
+    query: drivers
+  - description: Displays shared resources on a computer system running Windows. This
+      may be a disk drive, printer, interprocess communication, or other sharable
+      device.
+    interval: 3600
+    name: shared_resources
+    platform: windows
+    query: shared_resources
+  - description: Lists all the patches applied
+    interval: 3600
+    name: patches
+    platform: windows
+    query: patches
+    removed: false
+  - description: Pipes snapshot query
+    interval: 28800
+    name: pipes_snapshot
+    platform: windows
+    query: pipes_snapshot
+    snapshot: true
+  - description: Programs snapshot query
+    interval: 28800
+    name: programs_snapshot
+    platform: windows
+    query: programs_snapshot
+    snapshot: true
+  - description: Services snapshot query
+    interval: 28800
+    name: services_snapshot
+    platform: windows
+    query: services_snapshot
+    snapshot: true
+  - description: WMI CommandLineEventConsumer, which can be used for persistence on
+      Windows. See https://www.blackhat.com/docs/us-15/materials/us-15-Graeber-Abusing-Windows-Management-Instrumentation-WMI-To-Build-A-Persistent%20Asynchronous-And-Fileless-Backdoor-wp.pdf
+      for more details.
+    interval: 3600
+    name: wmi_cli_event_consumers
+    platform: windows
+    query: wmi_cli_event_consumers
+  - description: Lists the relationship between event consumers and filters.
+    interval: 3600
+    name: wmi_filter_consumer_binding
+    platform: windows
+    query: wmi_filter_consumer_binding
+  - description: Snapshot query for Chrome extensions
+    interval: 3600
+    name: chrome_extensions_snapshot
+    platform: windows
+    query: chrome_extensions_snapshot
+  - description: Retrieve the interface name, IP address, and MAC address for all
+      interfaces on the host.
+    interval: 600
+    name: network_interfaces_snapshot
+    platform: windows
+    query: network_interfaces_snapshot
+    snapshot: true
+  - description: Local system users.
+    interval: 3600
+    name: users
+    platform: windows
+    query: users
+  - description: Snapshot query for WMI event consumers.
+    interval: 28800
+    name: wmi_cli_event_consumers_snapshot
+    platform: windows
+    query: wmi_cli_event_consumers_snapshot
+    snapshot: true
+  - description: List all certificates in the trust store
+    interval: 3600
+    name: certificates
+    platform: windows
+    query: certificates
+    removed: false
+  - description: Drivers snapshot query
+    interval: 28800
+    name: drivers_snapshot
+    platform: windows
+    query: drivers_snapshot
+    snapshot: true
+  - description: Lists WMI event filters.
+    interval: 3600
+    name: wmi_event_filters
+    platform: windows
+    query: wmi_event_filters
+  - description: List installed Internet Explorer extensions
+    interval: 3600
+    name: ie_extensions
+    platform: windows
+    query: ie_extensions
+  - description: List the kernel path, version, etc.
+    interval: 3600
+    name: kernel_info
+    platform: windows
+    query: kernel_info
+  - description: List the version of the resident operating system
+    interval: 3600
+    name: os_version
+    platform: windows
+    query: os_version
+  - description: Patches snapshot query
+    interval: 28800
+    name: patches_snapshot
+    platform: windows
+    query: patches_snapshot
+    snapshot: true
+  - description: Named and Anonymous pipes.
+    interval: 3600
+    name: pipes
+    platform: windows
+    query: pipes
+    removed: false
+  - description: Lists installed programs
+    interval: 0
+    name: programs
+    platform: windows
+    query: programs
+  - description: List all certificates in the trust store (snapshot query)
+    interval: 0
+    name: certificates_snapshot
+    platform: windows
+    query: certificates_snapshot
+    snapshot: true
+  - description: List the contents of the Windows hosts file
+    interval: 3600
+    name: etc_hosts
+    platform: windows
+    query: etc_hosts
+  - description: Lists all of the tasks in the Windows task scheduler
+    interval: 3600
+    name: scheduled_tasks
+    platform: windows
+    query: scheduled_tasks
+  - description: Extracted information from Windows crash logs (Minidumps).
+    interval: 3600
+    name: windows_crashes
+    platform: windows
+    query: windows_crashes
+    removed: false
+  - description: System uptime
+    interval: 3600
+    name: uptime
+    platform: windows
+    query: uptime
+    snapshot: true
+  - description: Snapshot query for WMI script event consumers.
+    interval: 3600
+    name: wmi_script_event_consumers
+    platform: windows
+    query: wmi_script_event_consumers
+    snapshot: true
+  - description: List installed Chocolatey packages
+    interval: 3600
+    name: chocolatey_packages
+    platform: windows
+    query: chocolatey_packages
+  - description: Shared resources snapshot query
+    interval: 28800
+    name: shared_resources_snapshot
+    platform: windows
+    query: shared_resources_snapshot
+    snapshot: true
+  - description: Lists all installed services configured to start automatically at
+      boot
+    interval: 3600
+    name: services
+    platform: windows
+    query: services
+  - description: Users snapshot query
+    interval: 28800
+    name: users_snapshot
+    platform: windows
+    query: users_snapshot
+    snapshot: true
+  - description: List installed Chrome Extensions for all users
+    interval: 3600
+    name: chrome_extensions
+    platform: windows
+    query: chrome_extensions
+  - description: Operating system version snapshot query
+    interval: 28800
+    name: os_version_snapshot
+    platform: windows
+    query: os_version_snapshot
+    snapshot: true
+  - description: System information for identification.
+    interval: 3600
+    name: system_info
+    platform: windows
+    query: system_info
+  - description: Snapshot query for WMI event filters.
+    interval: 28800
+    name: wmi_event_filters_snapshot
+    platform: windows
+    query: wmi_event_filters_snapshot
+    snapshot: true
+  - description: Snapshot query for WMI filter consumer bindings.
+    interval: 28800
+    name: wmi_filter_consumer_binding_snapshot
+    platform: windows
+    query: wmi_filter_consumer_binding_snapshot
+    snapshot: true
+  - description: Information about the resident osquery process
+    interval: 28800
+    name: osquery_info
+    platform: windows
+    query: osquery_info
+    snapshot: true
+  - description: Scheduled Tasks snapshot query
+    interval: 28800
+    name: scheduled_tasks_snapshot
+    platform: windows
+    query: scheduled_tasks_snapshot
+    snapshot: true
+  - description: Appcompat shims (.sdb files) installed on Windows hosts.
+    interval: 3600
+    name: appcompat_shims
+    platform: windows
+    query: appcompat_shims
+  - description: Disk encryption status and information snapshot query.
+    interval: 28800
+    name: bitlocker_info_snapshot
+    platform: windows
+    query: bitlocker_info_snapshot
+    snapshot: true
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Appcompat shims (.sdb files) installed on Windows hosts.
+  name: appcompat_shims
+  query: SELECT * FROM appcompat_shims WHERE description!='EMET_Database' AND
+    executable NOT IN ('setuphost.exe','setupprep.exe','iisexpress.exe');
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Disk encryption status and information snapshot query.
+  name: bitlocker_info_snapshot
+  query: SELECT * FROM bitlocker_info;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: System info snapshot query
+  name: system_info_snapshot
+  query: SELECT * FROM system_info;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: List in-use Windows drivers
+  name: drivers
+  query: SELECT * FROM drivers;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Displays shared resources on a computer system running Windows. This
+    may be a disk drive, printer, interprocess communication, or other sharable device.
+  name: shared_resources
+  query: SELECT * FROM shared_resources;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Lists all the patches applied
+  name: patches
+  query: SELECT * FROM patches;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Pipes snapshot query
+  name: pipes_snapshot
+  query: SELECT processes.path, processes.cmdline, processes.uid, processes.on_disk,
+    pipes.name, pid FROM pipes JOIN processes USING (pid);
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Programs snapshot query
+  name: programs_snapshot
+  query: SELECT * FROM programs;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Services snapshot query
+  name: services_snapshot
+  query: SELECT * FROM services;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: WMI CommandLineEventConsumer, which can be used for persistence on
+    Windows. See https://www.blackhat.com/docs/us-15/materials/us-15-Graeber-Abusing-Windows-Management-Instrumentation-WMI-To-Build-A-Persistent%20Asynchronous-And-Fileless-Backdoor-wp.pdf
+    for more details.
+  name: wmi_cli_event_consumers
+  query: SELECT * FROM wmi_cli_event_consumers;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Lists the relationship between event consumers and filters.
+  name: wmi_filter_consumer_binding
+  query: SELECT * FROM wmi_filter_consumer_binding;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Snapshot query for Chrome extensions
+  name: chrome_extensions_snapshot
+  query: SELECT * FROM users CROSS JOIN chrome_extensions USING (uid);
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Retrieve the interface name, IP address, and MAC address for all interfaces
+    on the host.
+  name: network_interfaces_snapshot
+  query: SELECT a.interface, a.address, d.mac FROM interface_addresses a JOIN interface_details
+    d USING (interface);
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Local system users.
+  name: users
+  query: SELECT * FROM users;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Snapshot query for WMI event consumers.
+  name: wmi_cli_event_consumers_snapshot
+  query: SELECT * FROM wmi_cli_event_consumers;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: List all certificates in the trust store
+  name: certificates
+  query: SELECT * FROM certificates WHERE path != 'Other People';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Drivers snapshot query
+  name: drivers_snapshot
+  query: SELECT * FROM drivers;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Lists WMI event filters.
+  name: wmi_event_filters
+  query: SELECT * FROM wmi_event_filters;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: List installed Internet Explorer extensions
+  name: ie_extensions
+  query: SELECT * FROM ie_extensions;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: List the kernel path, version, etc.
+  name: kernel_info
+  query: SELECT * FROM kernel_info;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: List the version of the resident operating system
+  name: os_version
+  query: SELECT * FROM os_version;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Patches snapshot query
+  name: patches_snapshot
+  query: SELECT * FROM patches;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Named and Anonymous pipes.
+  name: pipes
+  query: SELECT processes.path, processes.cmdline, processes.uid, processes.on_disk,
+    pipes.name, pid FROM pipes JOIN processes USING (pid);
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Lists installed programs
+  name: programs
+  query: SELECT * FROM programs;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: List all certificates in the trust store (snapshot query)
+  name: certificates_snapshot
+  query: SELECT * FROM certificates WHERE path != 'Other People';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: List the contents of the Windows hosts file
+  name: etc_hosts
+  query: SELECT * FROM etc_hosts;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Lists all of the tasks in the Windows task scheduler
+  name: scheduled_tasks
+  query: SELECT * FROM scheduled_tasks;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Extracted information from Windows crash logs (Minidumps).
+  name: windows_crashes
+  query: SELECT * FROM windows_crashes;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: System uptime
+  name: uptime
+  query: SELECT * FROM uptime;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Snapshot query for WMI script event consumers.
+  name: wmi_script_event_consumers
+  query: SELECT * FROM wmi_script_event_consumers;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: List installed Chocolatey packages
+  name: chocolatey_packages
+  query: SELECT * FROM chocolatey_packages;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Shared resources snapshot query
+  name: shared_resources_snapshot
+  query: SELECT * FROM shared_resources;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Lists all installed services configured to start automatically at boot
+  name: services
+  query: SELECT * FROM services WHERE start_type='DEMAND_START' OR start_type='AUTO_START';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Users snapshot query
+  name: users_snapshot
+  query: SELECT * FROM users;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: List installed Chrome Extensions for all users
+  name: chrome_extensions
+  query: SELECT * FROM users CROSS JOIN chrome_extensions USING (uid);
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Operating system version snapshot query
+  name: os_version_snapshot
+  query: SELECT * FROM os_version;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: System information for identification.
+  name: system_info
+  query: SELECT * FROM system_info;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Snapshot query for WMI event filters.
+  name: wmi_event_filters_snapshot
+  query: SELECT * FROM wmi_event_filters;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Snapshot query for WMI filter consumer bindings.
+  name: wmi_filter_consumer_binding_snapshot
+  query: SELECT * FROM wmi_filter_consumer_binding;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Information about the resident osquery process
+  name: osquery_info
+  query: SELECT * FROM osquery_info;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Scheduled Tasks snapshot query
+  name: scheduled_tasks_snapshot
+  query: SELECT * FROM scheduled_tasks;
+---
+apiVersion: v1
+kind: pack
+spec:
+  name: windows-registry-monitoring
+  queries:
+  - description: Technique used by attackers to prevent computer accounts from changing
+      their password, thus extending the life of Kerberos silver tickets (https://adsecurity.org/?p=2011)
+    interval: 3600
+    name: computer_password_change_disabled_registry
+    platform: windows
+    query: computer_password_change_disabled_registry
+  - description: Returns 0 as a result if the registry key does not exist
+    interval: 3600
+    name: error_mode_registry_missing
+    platform: windows
+    query: error_mode_registry_missing
+  - description: Returns 0 as a result if the registry key does not exist
+    interval: 3600
+    name: per_user_ts_session_registry_missing
+    platform: windows
+    query: per_user_ts_session_registry_missing
+  - description: Returns 0 as a result if the registry key does not exist
+    interval: 3600
+    name: powershell_invocationheader_registry_missing
+    platform: windows
+    query: powershell_invocationheader_registry_missing
+  - description: Returns the content of the key if it does not match the expected
+      value
+    interval: 3600
+    name: bitlocker_encryption_settings_registry_misconfigured
+    platform: windows
+    query: bitlocker_encryption_settings_registry_misconfigured
+  - description: Returns the content of the key if it does not match the expected
+      value
+    interval: 3600
+    name: bitlocker_mbam_registry_misconfigured
+    platform: windows
+    query: bitlocker_mbam_registry_misconfigured
+  - description: Returns the content of this key if it exists, which it shouldn't
+      by default
+    interval: 3600
+    name: dns_plugin_dll_registry_exists
+    platform: windows
+    query: dns_plugin_dll_registry_exists
+  - description: Returns the content of this key if it exists, which it shouldn't
+      by default
+    interval: 3600
+    name: error_display_ui_registry_exists
+    platform: windows
+    query: error_display_ui_registry_exists
+  - description: Returns the content of the key if it does not match the expected
+      value
+    interval: 3600
+    name: log_errors_registry_misconfigured
+    platform: windows
+    query: log_errors_registry_misconfigured
+  - description: Returns the content of the key if it does not match the expected
+      value
+    interval: 3600
+    name: subscription_manager_registry_misconfigured
+    platform: windows
+    query: subscription_manager_registry_misconfigured
+  - description: Returns 0 as a result if the registry key does not exist
+    interval: 3600
+    name: subscription_manager_registry_missing
+    platform: windows
+    query: subscription_manager_registry_missing
+  - description: Returns the content of the key if it does not match the expected
+      value
+    interval: 3600
+    name: command_line_auditing_registry_misconfigured
+    platform: windows
+    query: command_line_auditing_registry_misconfigured
+  - description: Returns 0 as a result if the registry key does not exist
+    interval: 3600
+    name: crash_dump_registry_missing
+    platform: windows
+    query: crash_dump_registry_missing
+  - description: Returns the content of the key if it does not match the expected
+      value
+    interval: 3600
+    name: error_mode_registry_misconfigured
+    platform: windows
+    query: error_mode_registry_misconfigured
+  - description: Returns 0 as a result if the registry key does not exist
+    interval: 3600
+    name: log_errors_registry_missing
+    platform: windows
+    query: log_errors_registry_missing
+  - description: Returns the content of the key if it does not match the expected
+      value
+    interval: 3600
+    name: winrm_settings_registry_misconfigured
+    platform: windows
+    query: winrm_settings_registry_misconfigured
+  - description: Returns the content of the key if it does not match the expected
+      value
+    interval: 3600
+    name: crash_dump_registry_misconfigured
+    platform: windows
+    query: crash_dump_registry_misconfigured
+  - description: Detect a registry based persistence mechanism that allows an attacker
+      to specify a DLL to be loaded when cryptographic libraries are called (https://twitter.com/PsiDragon/status/978367732793135105)
+    interval: 3600
+    name: physicalstore_dll_registry_persistence
+    platform: windows
+    query: physicalstore_dll_registry_persistence
+  - description: Returns the content of the key if it does not match the expected
+      value
+    interval: 3600
+    name: powershell_logging_registry_misconfigured
+    platform: windows
+    query: powershell_logging_registry_misconfigured
+  - description: 'A registry key can be created to disable AMSI on Windows: (https://twitter.com/Moriarty_Meng/status/1011568060883333120)'
+    interval: 3600
+    name: amsi_disabled_registry
+    platform: windows
+    query: amsi_disabled_registry
+  - description: Controls how often to rotate the local computer password (defaults
+      to 30 days). A modification of this value may be an indicator of attacker activity.
+    interval: 3600
+    name: computer_maximum_password_age_changed_registry
+    platform: windows
+    query: computer_maximum_password_age_changed_registry
+  - description: Returns 0 as a result if the registry key does not exist
+    interval: 3600
+    name: dr_watson_registry_missing
+    platform: windows
+    query: dr_watson_registry_missing
+  - description: Returns the content of the key if it does not match the expected
+      value
+    interval: 3600
+    name: per_user_ts_session_registry_misconfigured
+    platform: windows
+    query: per_user_ts_session_registry_misconfigured
+  - description: Registry based persistence mechanism to load DLLs at reboot time
+      and avoids detection by Autoruns (https://oddvar.moe/2018/03/21/persistence-using-runonceex-hidden-from-autoruns-exe/).
+      Subkeys will be deleted after they run, thus (RunOnce). The RunOnceEx key will
+      remain.
+    interval: 3600
+    name: runonceex_persistence_registry
+    platform: windows
+    query: runonceex_persistence_registry
+  - description: Returns 0 as a result if the registry key does not exist
+    interval: 3600
+    name: smbv1_registry_missing
+    platform: windows
+    query: smbv1_registry_missing
+  - description: Returns 0 as a result if the registry key does not exist
+    interval: 3600
+    name: powershell_transcription_logging_registry_missing
+    platform: windows
+    query: powershell_transcription_logging_registry_missing
+  - description: Returns 0 as a result if the registry key does not exist
+    interval: 3600
+    name: powershell_module_logging_registry_missing
+    platform: windows
+    query: powershell_module_logging_registry_missing
+  - description: Returns 0 as a result if the registry key does not exist
+    interval: 3600
+    name: powershell_scriptblock_logging_registry_missing
+    platform: windows
+    query: powershell_scriptblock_logging_registry_missing
+  - description: Returns the content of the key if it does not match the expected
+      value
+    interval: 3600
+    name: bitlocker_mbam_endpoint_registry_misconfigured
+    platform: windows
+    query: bitlocker_mbam_endpoint_registry_misconfigured
+  - description: Returns 0 as a result if the registry key does not exist
+    interval: 3600
+    name: command_line_auditing_registry_missing
+    platform: windows
+    query: command_line_auditing_registry_missing
+  - description: ""
+    interval: 3600
+    name: smbv1_registry_misconfigured
+    platform: windows
+    query: smbv1_registry_misconfigured
+  - description: Returns the content of this key if it exists, which it shouldn't
+      by default
+    interval: 3600
+    name: send_error_alert_registry_exists
+    platform: windows
+    query: send_error_alert_registry_exists
+  targets:
+    labels: 
+    - MS Windows
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Technique used by attackers to prevent computer accounts from changing
+    their password, thus extending the life of Kerberos silver tickets (https://adsecurity.org/?p=2011)
+  name: computer_password_change_disabled_registry
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters\DisablePasswordChange'
+    AND data!=0;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns 0 as a result if the registry key does not exist
+  name: error_mode_registry_missing
+  query: SELECT IFNULL(key_count,0) AS key_exists FROM (SELECT COUNT(*) AS key_count
+    FROM registry WHERE path='HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Windows\ErrorMode')
+    WHERE key_exists!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns 0 as a result if the registry key does not exist
+  name: per_user_ts_session_registry_missing
+  query: SELECT IFNULL(key_count,0) AS key_exists FROM (SELECT COUNT(*) AS key_count
+    FROM registry WHERE path='HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal
+    Server\fSingleSessionPerUser') WHERE key_exists!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns 0 as a result if the registry key does not exist
+  name: powershell_invocationheader_registry_missing
+  query: SELECT IFNULL(key_count,0) AS key_exists FROM (SELECT COUNT(*) AS key_count
+    FROM registry WHERE path='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Powershell\Transcription\EnableInvocationHeader')
+    WHERE key_exists!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns the content of the key if it does not match the expected value
+  name: bitlocker_encryption_settings_registry_misconfigured
+  query: SELECT * FROM registry WHERE (path='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE\MDOPBitLockerManagement\ShouldEncryptOSDrive'
+    OR path='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE\MDOPBitLockerManagement\OSDriveProtector')
+    AND data!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns the content of the key if it does not match the expected value
+  name: bitlocker_mbam_registry_misconfigured
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE\MDOPBitLockerManagement\UseMBAMServices'
+    AND data!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns the content of this key if it exists, which it shouldn't by
+    default
+  name: dns_plugin_dll_registry_exists
+  query: SELECT * FROM registry WHERE key='HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\DNS\Parameters\ServerLevelPluginDll';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns the content of this key if it exists, which it shouldn't by
+    default
+  name: error_display_ui_registry_exists
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\Software\Microsoft\PCHealth\ErrorReporting\ShowUI';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns the content of the key if it does not match the expected value
+  name: log_errors_registry_misconfigured
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\CrashControl\LogEvent'
+    AND data!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns the content of the key if it does not match the expected value
+  name: subscription_manager_registry_misconfigured
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\EventLog\EventForwarding\SubscriptionManager\1'
+    AND (data!='Server=http://subdomain.domain.com:5985/wsman/SubscriptionManager/WEC'
+    AND data!='Server=http://subdomain.domain.com:5985/wsman/SubscriptionManager/WEC');
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns 0 as a result if the registry key does not exist
+  name: subscription_manager_registry_missing
+  query: SELECT IFNULL(key_count,0) AS key_exists FROM (SELECT COUNT(*) AS key_count
+    FROM registry WHERE path='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\EventLog\EventForwarding\SubscriptionManager\1')
+    WHERE key_exists!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns the content of the key if it does not match the expected value
+  name: command_line_auditing_registry_misconfigured
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\Audit\ProcessCreationIncludeCmdLine_Enabled'
+    AND data!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns 0 as a result if the registry key does not exist
+  name: crash_dump_registry_missing
+  query: SELECT IFNULL(key_count,0) AS key_exists FROM (SELECT COUNT(*) AS key_count
+    FROM registry WHERE path='HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\CrashControl\CrashDumpEnabled')
+    WHERE key_exists!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns the content of the key if it does not match the expected value
+  name: error_mode_registry_misconfigured
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Windows\ErrorMode'
+    AND data=2;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns 0 as a result if the registry key does not exist
+  name: log_errors_registry_missing
+  query: SELECT IFNULL(key_count,0) AS key_exists FROM (SELECT COUNT(*) AS key_count
+    FROM registry WHERE path='HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\CrashControl\LogEvent')
+    WHERE key_exists!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns the content of the key if it does not match the expected value
+  name: winrm_settings_registry_misconfigured
+  query: 'SELECT * FROM registry WHERE (path=''HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Client\AllowBasic''
+    OR path=''HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Client\AllowCredSSP''
+    OR path=''HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Client\AllowUnencryptedTraffic''
+    OR path=''HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Client\AllowDigest''
+    OR path=''HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Service\AllowBasic''
+    OR path=''HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Service\AllowCredSSP''
+    OR path=''HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Service\AllowUnencryptedTraffic''
+    OR path=''HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Service\WinRS\AllowRemoteShellAccess'')
+    AND data!=0; '
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns the content of the key if it does not match the expected value
+  name: crash_dump_registry_misconfigured
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\CrashControl\CrashDumpEnabled'
+    AND data=0;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Detect a registry based persistence mechanism that allows an attacker
+    to specify a DLL to be loaded when cryptographic libraries are called (https://twitter.com/PsiDragon/status/978367732793135105)
+  name: physicalstore_dll_registry_persistence
+  query: SELECT key, path, name, mtime, username FROM registry r, users WHERE path
+    LIKE 'HKEY_USERS\'||uuid||'\Software\Microsoft\SystemCertificates\CA\PhysicalStores\%%'
+    OR path LIKE 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\OID\EncodingType
+    0\CertDllOpenStoreProv\%%' AND name!='#16' AND name!='Ldap';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns the content of the key if it does not match the expected value
+  name: powershell_logging_registry_misconfigured
+  query: SELECT * FROM registry WHERE (path='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Powershell\ModuleLogging\EnableModuleLogging'
+    OR path='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Powershell\ScriptBlockLogging\EnableScriptBlockLogging'
+    OR path='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Powershell\Transcription\EnableTranscripting'
+    OR path='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Powershell\Transcription\EnableInvocationHeader')
+    AND data!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: 'A registry key can be created to disable AMSI on Windows: (https://twitter.com/Moriarty_Meng/status/1011568060883333120)'
+  name: amsi_disabled_registry
+  query: SELECT key, r.path, r.name, r.mtime, r.data, username from registry r, users
+    WHERE path = 'HKEY_USERS\'||uuid||'\Software\Microsoft\Windows Script\Settings\AmsiEnable'
+    AND data=0;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls how often to rotate the local computer password (defaults
+    to 30 days). A modification of this value may be an indicator of attacker activity.
+  name: computer_maximum_password_age_changed_registry
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters\MaximumPasswordAge'
+    and data!=30;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns 0 as a result if the registry key does not exist
+  name: dr_watson_registry_missing
+  query: SELECT IFNULL(key_count,0) AS key_exists FROM (SELECT COUNT(*) AS key_count
+    FROM registry where key='HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AeDebug')
+    WHERE key_exists!=2;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns the content of the key if it does not match the expected value
+  name: per_user_ts_session_registry_misconfigured
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal
+    Server\fSingleSessionPerUser' AND data!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Registry based persistence mechanism to load DLLs at reboot time and
+    avoids detection by Autoruns (https://oddvar.moe/2018/03/21/persistence-using-runonceex-hidden-from-autoruns-exe/).
+    Subkeys will be deleted after they run, thus (RunOnce). The RunOnceEx key will
+    remain.
+  name: runonceex_persistence_registry
+  query: SELECT * FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnceEx';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns 0 as a result if the registry key does not exist
+  name: smbv1_registry_missing
+  query: SELECT IFNULL(key_count,0) AS key_exists FROM (SELECT COUNT(*) AS key_count
+    FROM registry WHERE path='HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters\SMB1')
+    WHERE key_exists!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns 0 as a result if the registry key does not exist
+  name: powershell_transcription_logging_registry_missing
+  query: SELECT IFNULL(key_count,0) AS key_exists FROM (SELECT COUNT(*) AS key_count
+    FROM registry WHERE path='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Powershell\Transcription\EnableTranscripting')
+    WHERE key_exists!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns 0 as a result if the registry key does not exist
+  name: powershell_module_logging_registry_missing
+  query: SELECT IFNULL(key_count,0) AS key_exists FROM (SELECT COUNT(*) AS key_count
+    FROM registry WHERE path='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Powershell\ModuleLogging\EnableModuleLogging')
+    WHERE key_exists!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns 0 as a result if the registry key does not exist
+  name: powershell_scriptblock_logging_registry_missing
+  query: SELECT IFNULL(key_count,0) AS key_exists FROM (SELECT COUNT(*) AS key_count
+    FROM registry WHERE path='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Powershell\ScriptBlockLogging\EnableScriptBlockLogging')
+    WHERE key_exists!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns the content of the key if it does not match the expected value
+  name: bitlocker_mbam_endpoint_registry_misconfigured
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE\MDOPBitLockerManagement\KeyRecoveryServiceEndPoint'
+    AND data!='https://mbam.server.com/MBAMRecoveryAndHardwareService/CoreService.svc';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns 0 as a result if the registry key does not exist
+  name: command_line_auditing_registry_missing
+  query: SELECT IFNULL(key_count,0) AS key_exists FROM (SELECT COUNT(*) AS key_count
+    FROM registry WHERE path='HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\Audit\ProcessCreationIncludeCmdLine_Enabled')
+    WHERE key_exists!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  name: smbv1_registry_misconfigured
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters\SMB1'
+    AND data!=0;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns the content of this key if it exists, which it shouldn't by
+    default
+  name: send_error_alert_registry_exists
+  query: SELECT * FROM registry WHERE key='HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\CrashControl\SendAlert';
+---
+apiVersion: v1
+kind: pack
+spec:
+  name: windows-compliance
+  queries:
+  - description: 'This key does not exist by default and controls enabling/disabling
+      error reporting display. Some malware creates this key and sets the value to
+      0. See: https://www.documentcloud.org/documents/3477047-Document-07-Neel-Mehta-Billy-Leonard-and-Shane.html'
+    interval: 3600
+    name: error_display_ui_registry
+    platform: windows
+    query: error_display_ui_registry
+  - description: Entries for the FileRenameOperation support the MoveFileEx delayed-rename
+      and delayed-delete capabilities. Sometimes used as a self-deletion technique
+      for malware.
+    interval: 3600
+    name: filerenameoperations_registry
+    platform: windows
+    query: filerenameoperations_registry
+  - description: Controls which security packages store credentials in LSA memory,
+      secure boot, etc.
+    interval: 3600
+    name: local_security_authority_registry
+    platform: windows
+    query: local_security_authority_registry
+  - description: 'This key exists by default and has a default value of 1. Setting
+      this key to 0 disables logging errors/crashes to the System event channel. Some
+      malware sets this value to 0. See: https://www.documentcloud.org/documents/3477047-Document-07-Neel-Mehta-Billy-Leonard-and-Shane.html'
+    interval: 3600
+    name: log_errors_registry
+    platform: windows
+    query: log_errors_registry
+  - description: Controls Windows security provider configurations
+    interval: 3600
+    name: security_providers_registry
+    platform: windows
+    query: security_providers_registry
+  - description: Controls Windows Update server location and installation behavior.
+    interval: 3600
+    name: windows_update_settings_registry
+    platform: windows
+    query: windows_update_settings_registry
+  - description: 'Controls enabling/disabling crash dumps. This key has a default
+      value of 7, but some malware sets this value to 0. See: https://www.documentcloud.org/documents/3477047-Document-07-Neel-Mehta-Billy-Leonard-and-Shane.html'
+    interval: 3600
+    name: crash_dump_registry
+    platform: windows
+    query: crash_dump_registry
+  - description: 'This registry key specifies the path to a DLL to be loaded by a
+      Windows DNS server. This key does not exist by default. Can allow privesc: https://medium.com/@esnesenon/feature-not-bug-dnsadmin-to-dc-compromise-in-one-line-a0f779b8dc83'
+    interval: 3600
+    name: dns_plugin_dll_registry
+    platform: windows
+    query: dns_plugin_dll_registry
+  - description: The KnownDlls key defines the set of DLLs that are first searched
+      during system startup.
+    interval: 3600
+    name: knowndlls_registry
+    platform: windows
+    query: knowndlls_registry
+  - description: This key exists by default and has a default value of 1. Terminal
+      service connections are allowed to the host when the key value is set to 0
+    interval: 3600
+    name: terminal_service_deny_registry
+    platform: windows
+    query: terminal_service_deny_registry
+  - description: Controls Windows command-line auditing
+    interval: 3600
+    name: command_line_auditing_registry
+    platform: windows
+    query: command_line_auditing_registry
+  - description: 'This key (and subkeys) exist by default and are required to allow
+      post-mortem debuggers like Dr. Watson. Some malware deletes this key. See: https://www.documentcloud.org/documents/3477047-Document-07-Neel-Mehta-Billy-Leonard-and-Shane.html'
+    interval: 3600
+    name: dr_watson_registry
+    platform: windows
+    query: dr_watson_registry
+  - description: Controls how many simultaneous terminal services sessions can use
+      the same account
+    interval: 3600
+    name: per_user_ts_session_registry
+    platform: windows
+    query: per_user_ts_session_registry
+  - description: Controls Powershell execution policy, script execution, logging,
+      and more.
+    interval: 3600
+    name: powershell_settings_registry
+    platform: windows
+    query: powershell_settings_registry
+  - description: Controls enabling/disabling SMBv1. Setting this key to 0 disables
+      the SMBv1 protocol on the host.
+    interval: 3600
+    name: smbv1_registry
+    platform: windows
+    query: smbv1_registry
+  - description: Lists information about SecureBoot status.
+    interval: 3600
+    name: secure_boot_registry
+    platform: windows
+    query: secure_boot_registry
+  - description: This key does not exist by default and controls enabling/disabling
+      error reporting. Some malware creates this key sets the value to 0 (disables
+      error reports). See https://msdn.microsoft.com/en-us/library/aa939342(v=winembedded.5).aspx
+      and https://www.documentcloud.org/documents/3477047-Document-07-Neel-Mehta-Billy-Leonard-and-Shane.html
+    interval: 3600
+    name: error_report_registry
+    platform: windows
+    query: error_report_registry
+  - description: Controls behavior, size, and rotation strategy for primary windows
+      event log files.
+    interval: 3600
+    name: event_log_settings_registry
+    platform: windows
+    query: event_log_settings_registry
+  - description: Controls system TPM settings
+    interval: 3600
+    name: tpm_registry
+    platform: windows
+    query: tpm_registry
+  - description: Controls local WinRM client configuration and security.
+    interval: 3600
+    name: winrm_settings_registry
+    platform: windows
+    query: winrm_settings_registry
+  - description: 'Controls the suppression of error dialog boxes. The default value
+      is 0 (all messages are visible), but some malware sets this value to 2 (all
+      messages are invisible). See: https://www.documentcloud.org/documents/3477047-Document-07-Neel-Mehta-Billy-Leonard-and-Shane.html'
+    interval: 3600
+    name: error_mode_registry
+    platform: windows
+    query: error_mode_registry
+  - description: Controls sending administrative notifications after a crash. Some
+      malware sets this value to 0
+    interval: 3600
+    name: send_error_alert_registry
+    platform: windows
+    query: send_error_alert_registry
+  targets:
+    labels: 
+    - MS Windows
+---
+apiVersion: v1
+kind: query
+spec:
+  description: 'This key does not exist by default and controls enabling/disabling
+    error reporting display. Some malware creates this key and sets the value to 0.
+    See: https://www.documentcloud.org/documents/3477047-Document-07-Neel-Mehta-Billy-Leonard-and-Shane.html'
+  name: error_display_ui_registry
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\Software\Microsoft\PCHealth\ErrorReporting\ShowUI';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Entries for the FileRenameOperation support the MoveFileEx delayed-rename
+    and delayed-delete capabilities. Sometimes used as a self-deletion technique for
+    malware.
+  name: filerenameoperations_registry
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session
+    Manager\FileRenameOperations';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls which security packages store credentials in LSA memory, secure
+    boot, etc.
+  name: local_security_authority_registry
+  query: SELECT * FROM registry WHERE key LIKE 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\%%';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: 'This key exists by default and has a default value of 1. Setting this
+    key to 0 disables logging errors/crashes to the System event channel. Some malware
+    sets this value to 0. See: https://www.documentcloud.org/documents/3477047-Document-07-Neel-Mehta-Billy-Leonard-and-Shane.html'
+  name: log_errors_registry
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\CrashControl\LogEvent';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls Windows security provider configurations
+  name: security_providers_registry
+  query: SELECT * FROM registry WHERE key LIKE 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\%%';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls Windows Update server location and installation behavior.
+  name: windows_update_settings_registry
+  query: SELECT * FROM registry WHERE key LIKE 'HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate\%%';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: 'Controls enabling/disabling crash dumps. This key has a default value
+    of 7, but some malware sets this value to 0. See: https://www.documentcloud.org/documents/3477047-Document-07-Neel-Mehta-Billy-Leonard-and-Shane.html'
+  name: crash_dump_registry
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\CrashControl\CrashDumpEnabled';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: 'This registry key specifies the path to a DLL to be loaded by a Windows
+    DNS server. This key does not exist by default. Can allow privesc: https://medium.com/@esnesenon/feature-not-bug-dnsadmin-to-dc-compromise-in-one-line-a0f779b8dc83'
+  name: dns_plugin_dll_registry
+  query: SELECT * FROM registry WHERE key='HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\DNS\Parameters\ServerLevelPluginDll';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: The KnownDlls key defines the set of DLLs that are first searched during
+    system startup.
+  name: knowndlls_registry
+  query: SELECT * FROM registry WHERE path LIKE 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session
+    Manager\KnownDLLs\%%';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: This key exists by default and has a default value of 1. Terminal service
+    connections are allowed to the host when the key value is set to 0
+  name: terminal_service_deny_registry
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal
+    Server\fDenyTSConnections';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls Windows command-line auditing
+  name: command_line_auditing_registry
+  query: SELECT * FROM registry WHERE key='HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\Audit';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: 'This key (and subkeys) exist by default and are required to allow
+    post-mortem debuggers like Dr. Watson. Some malware deletes this key. See: https://www.documentcloud.org/documents/3477047-Document-07-Neel-Mehta-Billy-Leonard-and-Shane.html'
+  name: dr_watson_registry
+  query: SELECT * FROM registry WHERE key='HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows
+    NT\CurrentVersion\AeDebug';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls how many simultaneous terminal services sessions can use the
+    same account
+  name: per_user_ts_session_registry
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal
+    Server\fSingleSessionPerUser';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls Powershell execution policy, script execution, logging, and
+    more.
+  name: powershell_settings_registry
+  query: SELECT * FROM registry WHERE key LIKE 'HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Powershell\%%';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls enabling/disabling SMBv1. Setting this key to 0 disables the
+    SMBv1 protocol on the host.
+  name: smbv1_registry
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters\SMB1';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Lists information about SecureBoot status.
+  name: secure_boot_registry
+  query: SELECT * FROM registry WHERE key='HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecureBoot';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: This key does not exist by default and controls enabling/disabling
+    error reporting. Some malware creates this key sets the value to 0 (disables error
+    reports). See https://msdn.microsoft.com/en-us/library/aa939342(v=winembedded.5).aspx
+    and https://www.documentcloud.org/documents/3477047-Document-07-Neel-Mehta-Billy-Leonard-and-Shane.html
+  name: error_report_registry
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\Software\Microsoft\PCHealth\ErrorReporting\DoReport';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls behavior, size, and rotation strategy for primary windows
+    event log files.
+  name: event_log_settings_registry
+  query: SELECT * FROM registry WHERE key LIKE 'HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\EventLog\%%';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls system TPM settings
+  name: tpm_registry
+  query: SELECT * FROM registry WHERE key='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\TPM';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls local WinRM client configuration and security.
+  name: winrm_settings_registry
+  query: SELECT * FROM registry WHERE key LIKE 'HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\%%';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: 'Controls the suppression of error dialog boxes. The default value
+    is 0 (all messages are visible), but some malware sets this value to 2 (all messages
+    are invisible). See: https://www.documentcloud.org/documents/3477047-Document-07-Neel-Mehta-Billy-Leonard-and-Shane.html'
+  name: error_mode_registry
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Windows\ErrorMode';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls sending administrative notifications after a crash. Some malware
+    sets this value to 0
+  name: send_error_alert_registry
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\CrashControl\SendAlert';
+---
+apiVersion: v1
+kind: pack
+spec:
+  name: windows-application-security
+  queries:
+  - description: Controls Bitlocker full-disk encryption settings.
+    interval: 3600
+    name: bitlocker_autoencrypt_settings_registry
+    platform: windows
+    query: bitlocker_autoencrypt_settings_registry
+  - description: Controls Bitlocker full-disk encryption settings.
+    interval: 3600
+    name: bitlocker_fde_settings_registry
+    platform: windows
+    query: bitlocker_fde_settings_registry
+  - description: Controls Google Chrome plugins that are forcibly installed.
+    interval: 3600
+    name: chrome_extension_force_list_registry
+    platform: windows
+    query: chrome_extension_force_list_registry
+  - description: Controls EMET-protected applications and system settings.
+    interval: 3600
+    name: emet_settings_registry
+    platform: windows
+    query: emet_settings_registry
+  - description: Controls Local Administrative Password Solution (LAPS) settings.
+    interval: 3600
+    name: microsoft_laps_settings_registry
+    platform: windows
+    query: microsoft_laps_settings_registry
+  - description: Controls Windows Passport for Work (Hello) settings.
+    interval: 3600
+    name: passport_for_work_settings_registry
+    platform: windows
+    query: passport_for_work_settings_registry
+  - description: Controls UAC. A setting of 0 indicates that UAC is disabled.
+    interval: 3600
+    name: uac_settings_registry
+    platform: windows
+    query: uac_settings_registry
+  targets:
+    labels: 
+    - MS Windows
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls Bitlocker full-disk encryption settings.
+  name: bitlocker_autoencrypt_settings_registry
+  query: SELECT * FROM registry WHERE key LIKE 'HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Bitlocker\%%';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls Bitlocker full-disk encryption settings.
+  name: bitlocker_fde_settings_registry
+  query: SELECT * FROM registry WHERE key LIKE 'HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE\%%';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls Google Chrome plugins that are forcibly installed.
+  name: chrome_extension_force_list_registry
+  query: SELECT * FROM registry WHERE key='HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\ExtensionInstallForcelist';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls EMET-protected applications and system settings.
+  name: emet_settings_registry
+  query: SELECT * FROM registry WHERE key LIKE 'HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\EMET\%%';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls Local Administrative Password Solution (LAPS) settings.
+  name: microsoft_laps_settings_registry
+  query: SELECT * FROM registry WHERE key='HKEY_LOCAL_MACHINE\Software\Policies\Microsoft
+    Services\AdmPwd';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls Windows Passport for Work (Hello) settings.
+  name: passport_for_work_settings_registry
+  query: SELECT * FROM registry WHERE path LIKE 'HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\PassportForWork\%%';
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Controls UAC. A setting of 0 indicates that UAC is disabled.
+  name: uac_settings_registry
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\EnableLUA';
+---
+apiVersion: v1
+kind: pack
+spec:
+  name: security-tooling-checks
+  queries:
+  - description: Returns an event if a EndpointSecurityTool process is not found running
+      from /Applications/EndpointSecurityTool' (OSX) or 'c:\endpointsecuritytool.exe'
+      (Windows)
+    interval: 28800
+    name: endpoint_security_tool_not_running
+    platform: windows,darwin
+    query: endpoint_security_tool_not_running
+    snapshot: true
+  - description: "Returns an event if a BackupTool process is not found running from
+      '/Applications/BackupTool' (OSX) or 'c:\backuptool.exe' (Windows)"
+    interval: 28800
+    name: backup_tool_not_running
+    platform: windows,darwin
+    query: backup_tool_not_running
+    snapshot: true
+  - description: Returns the content of the key if the backend server does not match
+      the expected value
+    interval: 3600
+    name: endpoint_security_tool_backend_server_registry_misconfigured
+    platform: windows
+    query: endpoint_security_tool_backend_server_registry_misconfigured
+  targets:
+    labels: 
+    - MS Windows
+    - macOS
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns an event if a EndpointSecurityTool process is not found running
+    from /Applications/EndpointSecurityTool' (OSX) or 'c:\endpointsecuritytool.exe'
+    (Windows)
+  name: endpoint_security_tool_not_running
+  query: SELECT IFNULL(process_count,0) as process_exists FROM (SELECT count(*) as
+    process_count from processes where path='/Applications/EndpointSecurityTool' OR
+    lower(path)='c:\endpointsecuritytool.exe') where process_exists!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: "Returns an event if a BackupTool process is not found running from
+    '/Applications/BackupTool' (OSX) or 'c:\backuptool.exe' (Windows)"
+  name: backup_tool_not_running
+  query: SELECT IFNULL(process_count,0) as process_exists FROM (SELECT count(*) as
+    process_count from processes where path='/Applications/BackupTool' OR lower(path)
+    LIKE 'c:\backuptool.exe') where process_exists!=1;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Returns the content of the key if the backend server does not match
+    the expected value
+  name: endpoint_security_tool_backend_server_registry_misconfigured
+  query: SELECT * FROM registry WHERE path='HKEY_LOCAL_MACHINE\Software\EndpointSecurityTool\BackendServerLocation'
+    AND data!='https://expected_endpoint.local';
+---
+apiVersion: v1
+kind: pack
+spec:
+  name: performance-metrics
+  queries:
+  - description: Records the CPU time and memory usage for each individual query.
+      Helpful for identifying queries that may impact performance.
+    interval: 1800
+    name: per_query_perf
+    query: per_query_perf
+    snapshot: true
+  - description: Track the amount of CPU time used by osquery.
+    interval: 1800
+    name: runtime_perf
+    query: runtime_perf
+    snapshot: true
+  - description: Track the percentage of total CPU time utilized by $endpoint_security_tool
+    interval: 1800
+    name: endpoint_security_tool_perf
+    query: endpoint_security_tool_perf
+    snapshot: true
+  - description: Track the percentage of total CPU time utilized by $backup_tool
+    interval: 1800
+    name: backup_tool_perf
+    query: backup_tool_perf
+    snapshot: true
+  targets:
+    labels: 
+    - MS Windows
+    - macOS
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Records the CPU time and memory usage for each individual query. Helpful
+    for identifying queries that may impact performance.
+  name: per_query_perf
+  query: SELECT name, interval, executions, output_size, wall_time, (user_time/executions)
+    AS avg_user_time, (system_time/executions) AS avg_system_time, average_memory
+    FROM osquery_schedule;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Track the amount of CPU time used by osquery.
+  name: runtime_perf
+  query: SELECT ov.version AS os_version, ov.platform AS os_platform, ov.codename
+    AS os_codename, i.*, p.resident_size, p.user_time, p.system_time, time.minutes
+    AS counter, db.db_size_mb AS database_size FROM osquery_info i, os_version ov,
+    processes p, time, (SELECT (sum(size) / 1024) / 1024.0 AS db_size_mb FROM (SELECT
+    value FROM osquery_flags WHERE name = 'database_path' LIMIT 1) flags, file WHERE
+    path LIKE flags.value || '%%' AND type = 'regular') db WHERE p.pid = i.pid;
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Track the percentage of total CPU time utilized by $endpoint_security_tool
+  name: endpoint_security_tool_perf
+  query: SELECT ((tool_time*100)/(SUM(system_time) + SUM(user_time))) AS pct FROM
+    processes, (SELECT (SUM(processes.system_time)+SUM(processes.user_time)) AS tool_time
+    FROM processes WHERE name='endpoint_security_tool');
+---
+apiVersion: v1
+kind: query
+spec:
+  description: Track the percentage of total CPU time utilized by $backup_tool
+  name: backup_tool_perf
+  query: SELECT ((backuptool_time*100)/(SUM(system_time) + SUM(user_time))) AS pct
+    FROM processes, (SELECT (SUM(processes.system_time)+SUM(processes.user_time))
+    AS backuptool_time FROM processes WHERE name='backup_tool');
