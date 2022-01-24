@@ -1,10 +1,10 @@
 # OSQuery
 
-Fleet-managed instance of OSQuery is deployed across every host in BlueTeam.Lab system and is configured to log data to Fleet Manager installed on the same server where Wazuh instance is.
+A fleet-managed instance of OSQuery is deployed across every host in the BlueTeam.Lab system and is configured to log data to the Fleet Manager installed on the same server where the Wazuh instance is.
 
-Ansible OSQuery deployment task can be found in [ansible/roles/osqueryagent/tasks/main.yml](../ansible/roles/osqueryagent/tasks/main.yml) and corresponding FleetDM in [/ansible/roles/fleetserver/tasks/main.yml](../ansible/roles/fleetserver/tasks/main.yml).
+Ansible OSQuery deployment task can be found in [ansible/roles/osqueryagent/tasks/main.yml](../ansible/roles/osqueryagent/tasks/main.yml) and the corresponding FleetDM in [/ansible/roles/fleetserver/tasks/main.yml](../ansible/roles/fleetserver/tasks/main.yml).
 
-In order to modify the configuration of OSQuery and Fleet please change the following config section in [domain_setup.yml](ansible/domain_setup.yml) file.
+In order to modify the configuration of OSQuery and Fleet, please change the following config section in the [domain_setup.yml](ansible/domain_setup.yml) file.
 ```
 # FleetDM Fleet Setup
 Fleetdm:
@@ -38,15 +38,15 @@ osquery_download:
   debian_url: https://pkg.osquery.io/deb/osquery_5.1.0-1.linux_amd64.deb
 ```
 
-Please note that Ansible deployment task, [ansible/roles/osqueryagent/tasks/main.yml](../ansible/roles/osqueryagent/tasks/main.yml), pulls a number of configuration files from [Palantir configuration GitHub repo](https://github.com/palantir/osquery-configuration).
+Please note that the Ansible deployment task, [ansible/roles/osqueryagent/tasks/main.yml](../ansible/roles/osqueryagent/tasks/main.yml), pulls a number of configuration files from the [Palantir configuration GitHub repo](https://github.com/palantir/osquery-configuration).
 
 ## How To Change SSL certificate
 
-By default pre-generated and self-signed certificates are copied in for client-server setup between OSQuery and Fleetdm. In order to change certificates please use following command to generate new ones and place in templates directory for OSQuery [ansible/roles/osqueryagent/templates/](../ansible/roles/osqueryagent/templates/) and Fleetdm server [ansible/roles/fleetserver/templates/](../ansible/roles/fleetserver/templates/) .
+By default pre-generated and self-signed certificates are copied in for the client-server setup between OSQuery and Fleetdm. In order to change certificates, please use the following command to generate new ones and place in templates directory for the OSQuery [ansible/roles/osqueryagent/templates/](../ansible/roles/osqueryagent/templates/) and Fleetdm server [ansible/roles/fleetserver/templates/](../ansible/roles/fleetserver/templates/).
 
 ```
 # openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /tmp/ssl.key -out /tmp/ssl.crt -subj /CN=[IP of Wazuh SERVER] -batch
 # for example: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /tmp/ssl.key -out /tmp/ssl.crt -subj /CN=10.0.10.100 -batch
 ```
 
-NOTE: In order to pass certificate validation in OSQuery/FleetDM setup, CN needs to have either FQDN or IP of the FleetDM server. File names are ```ssl.crt``` and ```ssl.key``` for certificate and associated key material. Feel free to change that however you please by editing ansible configuration for [OSQuery](../ansible/roles/osqueryagent/tasks/main.yml) and corresponding [FleetDM Server](../ansible/roles/fleetserver/tasks/main.yml)
+NOTE: In order to pass certificate validation in the OSQuery/FleetDM setup, CN needs to have either FQDN or IP of the FleetDM server. File names are ```ssl.crt``` and ```ssl.key``` for each certificate and the associated key material. Feel free to change that however by editing the Ansible configuration for the [OSQuery](../ansible/roles/osqueryagent/tasks/main.yml) and the corresponding [FleetDM Server](../ansible/roles/fleetserver/tasks/main.yml)

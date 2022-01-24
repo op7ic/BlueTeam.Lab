@@ -3,7 +3,7 @@
 ## Wazuh Server
 Wazuh server is configured to run on top of Ubuntu and the entire configuration is done using headless scripts located in the [templates folder](../ansible/roles/wazuhserver/templates). 
 
-In order to modify the configuration of Wazuh, please change the following config section in [domain_setup.yml](../ansible/domain_setup.yml) file.
+In order to modify the configuration of Wazuh, change the following config section in [domain_setup.yml](../ansible/domain_setup.yml) file.
 ```
 # Setup for Wazuh Server and Agent. Versions will change so you might need to update this URL with time.
 wazuh_admin:
