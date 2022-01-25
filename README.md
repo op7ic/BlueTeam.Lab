@@ -242,6 +242,11 @@ In order to modify the default credentials, change usernames and passwords in [d
 
 ![](./documentation/pic/vraptor-console.PNG)
 
+![](./documentation/pic/LokiResults.png)
+
+![](./documentation/pic/pesieve.png)
+
+
 
 # Contributing
 
