@@ -38,13 +38,13 @@
       tags: monitoring
 
     - name: Config Defender exception for Loki2WindowsEventLog
-      win_powershell:
+      ansible.windows.win_powershell:
         script: |
           Add-MpPreference -ExclusionPath "C:\Program File\Loki2WindowsEventLog\"
       tags: monitoring
                
     - name: Config Defender exception for PeSieve2WindowsEventLog
-      win_powershell:
+      ansible.windows.win_powershell:
         script: |
           Add-MpPreference -ExclusionPath "C:\Program File\PeSieve2WindowsEventLog\"
       tags: monitoring
