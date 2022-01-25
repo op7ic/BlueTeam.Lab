@@ -40,13 +40,13 @@
     - name: Config Defender exception for Loki2WindowsEventLog
       ansible.windows.win_powershell:
         script: |
-          Add-MpPreference -ExclusionPath "C:\Program File\Loki2WindowsEventLog\"
+          Add-MpPreference -ExclusionPath "C:\Program Files\Loki2WindowsEventLog\"
       tags: monitoring
                
     - name: Config Defender exception for PeSieve2WindowsEventLog
       ansible.windows.win_powershell:
         script: |
-          Add-MpPreference -ExclusionPath "C:\Program File\PeSieve2WindowsEventLog\"
+          Add-MpPreference -ExclusionPath "C:\Program Files\PeSieve2WindowsEventLog\"
       tags: monitoring
       
     - name: Download Pe-SieveToWinEventLog and set it up
