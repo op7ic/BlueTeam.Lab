@@ -49,10 +49,11 @@
           Add-MpPreference -ExclusionPath "C:\Program Files\PeSieve2WindowsEventLog\*"
       tags: monitoring
                    
-    - name: Config Defender exception for PeSieve2WindowsEventLog
+    - name: Config Defender exception for Loki2WindowsEventLog Loki binary
       ansible.windows.win_powershell:
         script: |
           Add-MpPreference -ExclusionProcess "C:\Program Files\Loki2WindowsEventLog\loki\loki.exe"
+          Add-MpPreference -ExclusionProcess "C:\Program Files\Loki2WindowsEventLog\loki\loki-upgrader.exe"
       tags: monitoring
       
     - name: Download Pe-SieveToWinEventLog and set it up
