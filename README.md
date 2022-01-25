@@ -111,7 +111,10 @@ Command ```az vm image list``` can be used to identify various OS versions for t
 - [OSQuery](https://osquery.readthedocs.io/en/stable/installation/install-windows/) and [FleetDM](https://github.com/fleetdm/fleet) installed across the infrastructure, using configuration templates from [Palantir](https://github.com/palantir/osquery-configuration).
 - [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) Server configured and operational.
 - [Velocidex Velociraptor](https://github.com/Velocidex/velociraptor) Agents configured across infrastructure and feeding data into the Velociraptor server.
-- WinLogBeat configured to log data into Elastic instance.
+- [WinLogBeat](https://www.elastic.co/guide/en/beats/winlogbeat/current/_winlogbeat_overview.html) configured to log data into Elastic instance.
+- [LokiToWinEventLog](https://github.com/op7ic/LokiToWinEventLog) Loki Scanner configured to log data to Windows Event log every 3 hours and ship data to Elastic instance installed with [Wazuh Server](https://wazuh.com/).
+- [Pe-SieveToWinEventLog](https://github.com/op7ic/Pe-SieveToWinEventLog) Pe-Sieve Scanner configured to log data to Windows Event log every 3 hours and ship data to Elastic instance installed with [Wazuh Server](https://wazuh.com/).
+
 ---
 # Documentation
 
