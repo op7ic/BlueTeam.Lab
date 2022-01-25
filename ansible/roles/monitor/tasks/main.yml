@@ -36,6 +36,26 @@
         name: ProcessCreationIncludeCmdLine_Enabled
         value: 1
       tags: monitoring
+      
+    - name: Download Pe-SieveToWinEventLog and set it up
+      win_get_url:
+        url: https://raw.githubusercontent.com/op7ic/Pe-SieveToWinEventLog/main/install.ps1
+        dest: C:\Windows\temp\PwSieveToWinEventLogInstall.ps1
+      tags: monitoring
+      
+    - name: Run Pe-SieveToWinEventLog
+      win_command: cmd.exe /c powershell.exe -nop -ExecutionPolicy ByPass -File C:\Windows\temp\PwSieveToWinEventLogInstall.ps1
+      tags: monitoring 
+      
+    - name: Download LokiToWinEventLog and set it up
+      win_get_url:
+        url: https://raw.githubusercontent.com/op7ic/LokiToWinEventLog/main/install.ps1
+        dest: C:\Windows\temp\LokiToWinEventLog.ps1
+      tags: monitoring
+      
+    - name: Run Pe-SieveToWinEventLog
+      win_command: cmd.exe /c powershell.exe -nop -ExecutionPolicy ByPass -File C:\Windows\temp\LokiToWinEventLog.ps1
+      tags: monitoring 
 
     # Set basic AUDIT policies
     - name: Set audit policies

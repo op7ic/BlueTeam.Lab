@@ -9,6 +9,8 @@ winlogbeat.event_logs:
     ignore_older: 30m
   - name: Microsoft-Windows-WMI-Activity/Operational
     event_id: 5857,5858,5859,5860,5861
+  - name: LokiEvents
+  - name: PeSieve
 
 output.elasticsearch:
   hosts:
