@@ -54,8 +54,8 @@ az login
 # Clone Repository and move to BlueTeam.Lab folder
 git clone https://github.com/op7ic/BlueTeam.Lab.git && cd BlueTeam.Lab
 
-# Initialize Terraform
-terraform init
+# Initialize Terraform and begin planning
+terraform init && terraform plan
 
 # Create your lab using the following command. 
 terraform apply -auto-approve
