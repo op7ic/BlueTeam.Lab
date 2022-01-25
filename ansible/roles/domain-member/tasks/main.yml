@@ -181,10 +181,10 @@
       ignore_errors: yes # For some reason this errors sometimes. Execute but ignore errors. This is not crucial ..
       tags: base
       
-    # Sleep for 1 minute, after this task we call restart. This is just a precaution so everything on the box can settle down before going down.
+    # Sleep for 5 minutes, after this task we call restart. This is just a precaution so everything on the box can settle down before going down.
     - name: Sleep
       pause:
-        minutes: 1
+        minutes: 5
       tags: base 
       
   rescue:
