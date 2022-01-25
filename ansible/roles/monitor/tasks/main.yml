@@ -37,18 +37,16 @@
         value: 1
       tags: monitoring
 
-    - name: Config Defender exception for Loki
-      win_regedit:
-        path: HKLM:\SOFTWARE\Microsoft\Windows Defender\Exclusions\Paths
-        name: C:\Program File\Loki2WindowsEventLog\
-        value: 0
+    - name: Config Defender exception for Loki2WindowsEventLog
+      win_powershell:
+        script: |
+          Add-MpPreference -ExclusionPath "C:\Program File\Loki2WindowsEventLog\"
       tags: monitoring
-      
-    - name: Config Defender exception for Pe-SieveToWinEventLog
-      win_regedit:
-        path: HKLM:\SOFTWARE\Microsoft\Windows Defender\Exclusions\Paths
-        name: C:\Program File\PeSieve2WindowsEventLog\
-        value: 0
+               
+    - name: Config Defender exception for PeSieve2WindowsEventLog
+      win_powershell:
+        script: |
+          Add-MpPreference -ExclusionPath "C:\Program File\PeSieve2WindowsEventLog\"
       tags: monitoring
       
     - name: Download Pe-SieveToWinEventLog and set it up
