@@ -69,6 +69,9 @@ cd ansible && ANSIBLE_CONFIG=./ansible.cfg ansible-inventory -i inventory.azure_
 # Once done, destroy your lab using the following command:
 terraform destroy -auto-approve
 
+# If you would like to time the execution us following command:
+start_time=`date +%s` && terraform apply -auto-approve && end_time=`date +%s` && echo execution time was `expr $end_time - $start_time` s
+
 #NOTE: It will take about two hours to configure it all, depending on your selected hardware.
 ```
 
