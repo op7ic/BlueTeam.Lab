@@ -52,6 +52,7 @@
         - net-tools
         - unzip
         - gnupg
+        - dos2unix
       tags: fleetserver
 
     - name: Create fleetdm user

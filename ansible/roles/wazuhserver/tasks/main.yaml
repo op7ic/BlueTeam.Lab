@@ -46,12 +46,12 @@
       
     # Install Wazuh
     - name: Installing Wazuh - Step 1
-      command: chmod +x /tmp/unattended-installation.sh
+      command: dos2unix /tmp/unattended-installation.sh && chmod +x /tmp/unattended-installation.sh
       tags: wazuhserver
       
     # Install Wazuh
     - name: Installing Wazuh - Step 2
-      command: chmod +x /tmp/wazuh-passwords-tool.sh
+      command: dos2unix /tmp/wazuh-passwords-tool.sh && chmod +x /tmp/wazuh-passwords-tool.sh
       tags: wazuhserver
       
     # Install Wazuh - we need elevated privs here.
