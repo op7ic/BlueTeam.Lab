@@ -68,7 +68,7 @@
     # Install Wazuh - we need elevated privs here.
     - name: Installing Wazuh - Step 3
       become: yes
-      command: bash /tmp/unattended-installation.sh
+      command: bash /tmp/unattended-installation.sh -o
       tags: wazuhserver
       
     # Copy sysmon rules
