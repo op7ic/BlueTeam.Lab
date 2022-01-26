@@ -81,6 +81,13 @@
         ipv4_addresses: "{{ priv_dc_ip }}"
       tags: base
 
+    # Sleep for 1 minute. This is to give time for workstation to set itself properly.
+    # In my experiments, WinRM was timing out a lot with 'connection refused' error here otherwise.
+    - name: Sleep
+      pause:
+        minutes: 1
+      tags: base  
+
     # Strangly this sometimes errors but hosts joins the domain anyway. We will repeat the process later on just in case.  
     - name: Ensure workstation is domain-joined
       ignore_errors: yes
@@ -123,6 +130,14 @@
       retries: 4
       delay: 1
       tags: base  
+
+    # Sleep for 3 minutes. This is to give time for workstation to set itself properly.
+    # In my experiments, WinRM was timing out a lot with 'connection refused' error here otherwise.
+    - name: Sleep
+      pause:
+        minutes: 3
+      tags: base  
+      
       
     # Another reboot after joining domain. This is really just done to ensure boxes really did join the domain.
     # It might be not needed but the amount of timeout and errors we got when creating systems is just staggering.
