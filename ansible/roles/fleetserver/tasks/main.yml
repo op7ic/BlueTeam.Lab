@@ -42,6 +42,7 @@
       tags: fleetserver
 
     - name: Update repositories cache and install dos2unix
+      become: yes
       apt:
         name: dos2unix
         update_cache: yes
