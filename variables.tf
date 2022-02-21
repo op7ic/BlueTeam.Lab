@@ -1,3 +1,10 @@
+##########################################################
+# Author      : Jerzy 'Yuri' Kramarz (op7ic)             #
+# Version     : 1.0                                      #
+# Type        : Terraform                                #
+# Description : BlueTeam.Lab. See README.md for details  # 
+##########################################################
+
 ############################################################
 # Defualt config for various settings such as LAN segments, location of domain config file etc.
 ############################################################

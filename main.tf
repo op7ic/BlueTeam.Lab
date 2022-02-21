@@ -1,3 +1,11 @@
+##########################################################
+# Author      : Jerzy 'Yuri' Kramarz (op7ic)             #
+# Version     : 1.0                                      #
+# Type        : Terraform                                #
+# Description : BlueTeam.Lab. See README.md for details  # 
+##########################################################
+
+
 ############################################################
 # Provider And Resource Group Definition
 ############################################################
