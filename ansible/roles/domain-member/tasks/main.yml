@@ -202,6 +202,15 @@
       ignore_errors: yes # For some reason this errors sometimes. Execute but ignore errors. This is not crucial ..
       tags: base
       
+    # https://docs.microsoft.com/en-us/windows/client-management/mdm/policy-csp-privacy#privacy-disableprivacyexperience
+    - name: Disable 'Choose your privacy settings' screen at first logon
+      win_regedit:
+        path: HKCU:\SOFTWARE\Policies\Microsoft\Windows\OOBE
+        name: DisablePrivacyExperience
+        data: "1"
+        type: dword
+      tags: base
+      
     # Sleep for 5 minutes, after this task we call restart. This is just a precaution so everything on the box can settle down before going down.
     - name: Sleep
       pause:
