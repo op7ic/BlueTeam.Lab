@@ -38,7 +38,25 @@
     - name: Gather remote facts
       setup: {}
       tags: base
-
+      
+    - name: Check if we can connect with the default username and password
+      ansible.builtin.wait_for_connection:
+        connect_timeout: 10
+        timeout: 500
+        delay: 5
+        sleep: 5
+      register: connection
+      ignore_errors: yes
+      vars:
+        ansible_user: "{{ ansible_user }}"
+        ansible_pass: "{{ ansible_password }}"
+      tags: base
+      
+    - name: Print results
+      debug:
+        msg: "Connection {% if connection.failed %}failed{% else %}succeeded{% endif %}"
+      tags: base
+      
     # We already have WinRM at this point but invoking ConfigureRemotingForAnsible just in case. All this will do is to setup FW rules and create SSL cert. 
     - name: Download ConfigureRemotingForAnsible
       win_get_url:
