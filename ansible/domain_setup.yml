@@ -78,12 +78,12 @@ wazuh_admin:
   username: blueteam
   password: BlueTeamDetection0%%%
   wazuh_services_password: BlueTeamDetection0%%%
-  agent_url: https://packages.wazuh.com/4.x/windows/wazuh-agent-4.2.5-1.msi
+  agent_url: https://packages.wazuh.com/4.x/windows/wazuh-agent-4.3.8-1.msi
   
 # Velociraptor server/client binary location. Versions will change so you might need to update this URL with time.
 velociraptor_server:
-  server_download: https://github.com/Velocidex/velociraptor/releases/download/v0.6.3-rc1/velociraptor-v0.6.3-rc1-linux-amd64
-  client_download: https://github.com/Velocidex/velociraptor/releases/download/v0.6.2/velociraptor-v0.6.2-windows-amd64.msi
+  server_download: https://github.com/Velocidex/velociraptor/releases/download/v0.6.6-1/velociraptor-v0.6.6-1-linux-amd64
+  client_download: https://github.com/Velocidex/velociraptor/releases/download/v0.6.6-1/velociraptor-v0.6.6-2-windows-amd64.msi
   username: blueteam
   password: BlueTeamDetection0%%%
 
@@ -103,8 +103,8 @@ winlogbeat:
 # FleetDM Fleet Setup
 Fleetdm:
   enroll_secret: 7548392034598123
-  server_download_url: https://github.com/fleetdm/fleet/releases/download/fleet-v4.8.0/fleet_v4.8.0_linux.tar.gz
-  fleet_ctl_download_url: https://github.com/fleetdm/fleet/releases/download/fleet-v4.8.0/fleetctl_v4.8.0_linux.tar.gz
+  server_download_url: https://github.com/fleetdm/fleet/releases/download/fleet-v4.20.1/fleet_v4.20.1_linux.tar.gz
+  fleet_ctl_download_url: https://github.com/fleetdm/fleet/releases/download/fleet-v4.20.1/fleetctl_v4.20.1_linux.tar.gz
   server_install_folder: /opt/fleetdm
   redis_address: 127.0.0.1:6379
   username: blueteam@blueteam.lab
@@ -128,5 +128,5 @@ Fleetdm:
     
 # OSQuery download URL. Versions will change so you might need to update this URL with time.
 osquery_download:
-  windows_url: https://pkg.osquery.io/windows/osquery-5.1.0.msi
-  debian_url: https://pkg.osquery.io/deb/osquery_5.1.0-1.linux_amd64.deb
+  windows_url: https://pkg.osquery.io/windows/osquery-5.5.1.msi
+  debian_url: https://pkg.osquery.io/deb/osquery_5.5.1-1.linux_amd64.deb
