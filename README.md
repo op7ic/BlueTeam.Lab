@@ -22,7 +22,7 @@ NOTE: This lab is deliberately designed to be insecure. Please do not connect th
 # Prerequisites
 
 A number of features need to be installed on your system in order to use this setup. 
-```
+```bash
 # Step 1 - Install Azure CLI. More details on https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
@@ -48,7 +48,7 @@ pip3 install -r https://raw.githubusercontent.com/ansible-collections/azure/v1.1
 # Building and Deploying BlueTeam.Lab
 
 Once all the [prerequisites](#Prerequisites) are installed, perform the following series of steps:
-```
+```bash
 # Log in to Azure from command line to ensure that the access token is valid
 az login
 
@@ -80,7 +80,7 @@ start_time=`date +%s` && terraform apply -auto-approve && end_time=`date +%s` &&
 
 Terraform [variables](variables.tf) set the type of operating systems used for this deployment. A simple modification to runtime variables allows to specify different OS to run the entire Active Directory (AD) on. The default option is to use **Windows 10 Enterprise** for **Workstations** and **Windows Server 2019 Datacenter** for **Domain Controller**. Here are examples of a few common configuration options that can be used to modify the entire environment to use different OS versions:
 
-```
+```bash
 # Use Windows 10 Enterprise for Workstations and Server 2019 Datacenter for DC (default option)
 terraform apply -auto-approve
 
@@ -132,7 +132,7 @@ The following section describes various components making up this lab along with
 
 Once lab is constructed, Terraform will print out actual location of the systems and associated credentials. An example output can be found below.
 
-```
+```bash
 Network Setup:
 
 Domain Controller = xx.xx.xx.xx
